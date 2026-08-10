@@ -1,0 +1,8 @@
+{
+  "name": "@tao-takehome/web-starter",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo \"Add your web app dev command here.\""
+  }
+}

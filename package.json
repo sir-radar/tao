@@ -1,0 +1,18 @@
+{
+  "name": "tao-price-dashboard-takehome",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Frontend take-home exercise scaffold for a TAO token exchange web app.",
+  "scripts": {
+    "backend:dev": "pnpm --filter @tao-takehome/backend dev",
+    "backend:build": "pnpm --filter @tao-takehome/backend build",
+    "backend:start": "pnpm --filter @tao-takehome/backend start",
+    "backend:test": "pnpm --filter @tao-takehome/backend test",
+    "backend:typecheck": "pnpm --filter @tao-takehome/backend typecheck"
+  },
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}
