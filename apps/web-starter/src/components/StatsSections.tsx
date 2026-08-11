@@ -21,19 +21,21 @@ import { Spinner } from '@/components/ui/spinner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Movement } from './Movement';
 import { ResourceError } from './ResourceState';
+import { TrendArrowIcon } from './TrendArrowIcon';
 
 type Metric = {
   label: string;
   value: React.ReactNode;
   detail?: React.ReactNode;
+  align?: 'start' | 'end';
 };
 
 function MetricGrid({
   metrics,
-  layout = 'standard',
+  layout = 'three-columns',
 }: {
   metrics: Metric[];
-  layout?: 'highlights' | 'standard' | 'compact';
+  layout?: 'highlights' | 'two-columns' | 'three-columns';
 }) {
   return (
     <dl
@@ -41,12 +43,15 @@ function MetricGrid({
         'grid min-w-0 gap-x-6 gap-y-4',
         layout === 'highlights' &&
           'grid-cols-6 max-[1550px]:grid-cols-4 max-[1250px]:grid-cols-3',
-        layout === 'standard' && 'grid-cols-3',
-        layout === 'compact' && 'grid-cols-3',
+        layout === 'two-columns' && 'grid-cols-2',
+        layout === 'three-columns' && 'grid-cols-3',
       )}
     >
       {metrics.map((metric) => (
-        <div key={metric.label} className="min-w-0">
+        <div
+          key={metric.label}
+          className={cn('min-w-0', metric.align === 'end' && 'text-right')}
+        >
           <dt
             className={cn(
               'truncate leading-4 text-muted-foreground',
@@ -116,6 +121,174 @@ function supply(value: NullableNumber, symbol: string) {
   return value === null ? '—' : `${formatCompact(value)} ${symbol}`;
 }
 
+function metric(
+  label: string,
+  value: React.ReactNode,
+  options: Pick<Metric, 'detail' | 'align'> = {},
+): Metric {
+  return { label, value, ...options };
+}
+
+function DirectionalValue({
+  value,
+  format,
+}: {
+  value: NullableNumber;
+  format: (value: NullableNumber) => string;
+}) {
+  if (value === null) return <span className="text-muted-foreground">—</span>;
+
+  const direction = value > 0 ? 'up' : value < 0 ? 'down' : null;
+  return (
+    <span
+      className={cn(
+        'inline-flex items-center gap-0.5 whitespace-nowrap tabular',
+        direction === 'up' && 'text-positive',
+        direction === 'down' && 'text-negative',
+        direction === null && 'text-muted-foreground',
+      )}
+    >
+      {direction && <TrendArrowIcon direction={direction} />}
+      <span>{format(Math.abs(value))}</span>
+      <span className="sr-only">
+        {direction === 'up'
+          ? 'positive'
+          : direction === 'down'
+            ? 'negative'
+            : 'unchanged'}
+      </span>
+    </span>
+  );
+}
+
+function buildMetricGroups({
+  stats,
+  token,
+  symbol,
+}: {
+  stats: TokenStats;
+  token: TokenDetail;
+  symbol: string;
+}) {
+  const financials = {
+    marketCap: metric(
+      'Market cap',
+      formatCurrencyCompact(stats.financials.marketCap),
+    ),
+    circulatingSupply: metric(
+      'Circulating supply',
+      supply(stats.financials.circulatingSupply, symbol),
+    ),
+    fullyDilutedValue: metric(
+      'Fully diluted value',
+      formatCurrencyCompact(stats.financials.fullyDilutedValue),
+    ),
+    totalSupply: metric(
+      'Total supply',
+      supply(stats.financials.totalSupply, symbol),
+    ),
+    mcFdvRatio: metric(
+      'MC / FDV ratio',
+      formatRatio(stats.financials.mcFdvRatio),
+    ),
+    maxSupply: metric('Max supply', supply(stats.financials.maxSupply, symbol)),
+    totalStaked: metric(
+      'Total staked',
+      supply(stats.financials.totalStaked, symbol),
+    ),
+    averageStakeApy: metric(
+      'Average stake APY',
+      formatPercent(stats.financials.averageStakeApy, false),
+    ),
+  };
+
+  const trading = {
+    totalVolume: metric('Total volume', formatPrice(stats.trading.totalVolume)),
+    netVolume: metric(
+      'Net volume',
+      <DirectionalValue value={stats.trading.netVolume} format={formatPrice} />,
+      { align: 'end' },
+    ),
+    transactions: metric(
+      'Transactions',
+      formatInteger(stats.trading.transactions),
+    ),
+    traders: metric('Total traders', formatInteger(stats.trading.traders), {
+      align: 'end',
+    }),
+  };
+
+  const subnet = [
+    metric('Emissions / day', supply(stats.subnetData.emissionsPerDay, 'TAO')),
+    metric(
+      'Incentive burn',
+      formatPercent(
+        stats.subnetData.incentiveBurn === null
+          ? null
+          : stats.subnetData.incentiveBurn * 100,
+        false,
+      ),
+    ),
+    metric(
+      'Registration cost',
+      supply(stats.subnetData.registrationCost, 'TAO'),
+    ),
+    metric(
+      'Active validators',
+      formatInteger(stats.subnetData.activeValidators),
+    ),
+    metric('Active miners', formatInteger(stats.subnetData.activeMiners)),
+    metric('Registered keys', formatInteger(stats.subnetData.registeredKeys)),
+    metric('Key capacity', formatInteger(stats.subnetData.keyCapacity)),
+    metric('Registered', formatDate(stats.subnetData.registeredAt)),
+    metric('Next halving', formatDate(stats.subnetData.nextHalving)),
+  ];
+
+  const price = [
+    metric('Current price', formatPrice(stats.price.close)),
+    metric(
+      `Price change (${RANGE_LABELS[stats.range]})`,
+      <Movement value={stats.price.changePercent} variant="table" />,
+    ),
+    metric('Low', formatPrice(stats.price.low)),
+    metric('High', formatPrice(stats.price.high)),
+    metric(
+      'All-time high',
+      formatPrice(stats.price.allTimeHigh?.price ?? null),
+      {
+        detail: formatDate(stats.price.allTimeHigh?.timestamp ?? null),
+      },
+    ),
+    metric('All-time low', formatPrice(stats.price.allTimeLow?.price ?? null), {
+      detail: formatDate(stats.price.allTimeLow?.timestamp ?? null),
+    }),
+  ];
+
+  return {
+    highlights: [
+      {
+        ...financials.marketCap,
+        detail: (
+          <Movement value={token.changePercent24h} compact variant="summary" />
+        ),
+      },
+      financials.circulatingSupply,
+      financials.fullyDilutedValue,
+      financials.totalSupply,
+      financials.mcFdvRatio,
+      financials.maxSupply,
+      metric(
+        `Net volume (${RANGE_LABELS[stats.range]})`,
+        formatCurrencyCompact(stats.trading.netVolume),
+      ),
+      metric('Total traders', formatInteger(stats.trading.traders)),
+    ],
+    financials: Object.values(financials),
+    subnet,
+    trading: Object.values(trading),
+    price,
+  };
+}
 function TradingBars({ stats }: { stats: TokenStats }) {
   const groups = [
     {
@@ -182,7 +355,7 @@ function TradingBars({ stats }: { stats: TokenStats }) {
             <div
               className={cn(
                 'flex h-2 overflow-hidden rounded-2xl',
-                buyShare === null ? 'bg-muted' : 'bg-negative',
+                buyShare === null ? 'bg-muted' : 'gap-1 bg-transparent',
               )}
               role="img"
               aria-label={
@@ -191,16 +364,70 @@ function TradingBars({ stats }: { stats: TokenStats }) {
                   : `${group.label}: ${formatPercent(buyShare, false)} buy and ${formatPercent(sellShare, false)} sell`
               }
             >
-              {buyShare !== null && (
-                <span
-                  className="rounded-2xl bg-positive"
-                  style={{ width: `${buyShare}%` }}
-                />
+              {buyShare !== null && sellShare !== null && (
+                <>
+                  <span
+                    className="min-w-0 basis-0 rounded-2xl bg-positive"
+                    style={{ flexGrow: buyShare }}
+                  />
+                  <span
+                    className="min-w-0 basis-0 rounded-2xl bg-negative"
+                    style={{ flexGrow: sellShare }}
+                  />
+                </>
               )}
             </div>
           </div>
         );
       })}
+    </div>
+  );
+}
+
+function StatsPanelGrid({
+  stats,
+  token,
+  symbol,
+}: {
+  stats: TokenStats;
+  token: TokenDetail;
+  symbol: string;
+}) {
+  const metrics = buildMetricGroups({ stats, token, symbol });
+
+  return (
+    <div className="grid grid-cols-2 items-start gap-6 max-[1250px]:grid-cols-1">
+      <StatPanel
+        title={`Highlights (${RANGE_LABELS[stats.range]})`}
+        className="col-span-2 min-[1251px]:h-[236px] max-[1250px]:col-span-1"
+      >
+        <MetricGrid layout="highlights" metrics={metrics.highlights} />
+      </StatPanel>
+
+      <StatPanel title="Financials" className="min-[1251px]:h-[354px]">
+        <MetricGrid metrics={metrics.financials} />
+      </StatPanel>
+
+      <StatPanel title="Subnet data" className="min-[1251px]:h-[334px]">
+        <MetricGrid metrics={metrics.subnet} />
+      </StatPanel>
+
+      <StatPanel
+        title="Trading volume"
+        titleRight={<CurrencyPreview />}
+        className="min-[1251px]:h-[402px]"
+      >
+        <MetricGrid layout="two-columns" metrics={metrics.trading} />
+        <TradingBars stats={stats} />
+      </StatPanel>
+
+      <StatPanel
+        title="Price history"
+        titleRight={<CurrencyPreview />}
+        className="gap-[14px] min-[1251px]:h-[196px]"
+      >
+        <MetricGrid metrics={metrics.price} />
+      </StatPanel>
     </div>
   );
 }
@@ -295,258 +522,7 @@ export function StatsSections({
                   className="mb-6"
                 />
               )}
-              <div className="grid grid-cols-2 items-start gap-6 max-[1250px]:grid-cols-1">
-                <StatPanel
-                  title={`Highlights (${RANGE_LABELS[displayed.range]})`}
-                  className="col-span-2 min-[1251px]:h-[236px] max-[1250px]:col-span-1"
-                >
-                  <MetricGrid
-                    layout="highlights"
-                    metrics={[
-                      {
-                        label: 'Market cap',
-                        value: formatCurrencyCompact(
-                          displayed.financials.marketCap,
-                        ),
-                        detail: (
-                          <Movement value={token.changePercent24h} compact />
-                        ),
-                      },
-                      {
-                        label: 'Circulating supply',
-                        value: supply(
-                          displayed.financials.circulatingSupply,
-                          symbol,
-                        ),
-                      },
-                      {
-                        label: 'Fully diluted value',
-                        value: formatCurrencyCompact(
-                          displayed.financials.fullyDilutedValue,
-                        ),
-                      },
-                      {
-                        label: 'Total supply',
-                        value: supply(displayed.financials.totalSupply, symbol),
-                      },
-                      {
-                        label: 'Mkt cap / FDV',
-                        value: formatRatio(displayed.financials.mcFdvRatio),
-                      },
-                      {
-                        label: 'Max supply',
-                        value: supply(displayed.financials.maxSupply, symbol),
-                      },
-                      {
-                        label: 'Net volume',
-                        value: formatCurrencyCompact(
-                          displayed.trading.netVolume,
-                        ),
-                      },
-                      {
-                        label: 'Total traders',
-                        value: formatInteger(displayed.trading.traders),
-                      },
-                    ]}
-                  />
-                </StatPanel>
-
-                <StatPanel
-                  title="Financials"
-                  className="min-[1251px]:h-[354px]"
-                >
-                  <MetricGrid
-                    metrics={[
-                      {
-                        label: 'Market cap',
-                        value: formatCurrencyCompact(
-                          displayed.financials.marketCap,
-                        ),
-                      },
-                      {
-                        label: 'Circulating supply',
-                        value: supply(
-                          displayed.financials.circulatingSupply,
-                          symbol,
-                        ),
-                      },
-                      {
-                        label: 'Fully diluted value',
-                        value: formatCurrencyCompact(
-                          displayed.financials.fullyDilutedValue,
-                        ),
-                      },
-                      {
-                        label: 'Total supply',
-                        value: supply(displayed.financials.totalSupply, symbol),
-                      },
-                      {
-                        label: 'Mkt cap / FDV',
-                        value: formatRatio(displayed.financials.mcFdvRatio),
-                      },
-                      {
-                        label: 'Max supply',
-                        value: supply(displayed.financials.maxSupply, symbol),
-                      },
-                      {
-                        label: 'Total staked',
-                        value: supply(displayed.financials.totalStaked, symbol),
-                      },
-                      {
-                        label: 'Average stake APY',
-                        value: formatPercent(
-                          displayed.financials.averageStakeApy,
-                          false,
-                        ),
-                      },
-                    ]}
-                  />
-                </StatPanel>
-
-                <StatPanel
-                  title="Subnet data"
-                  className="min-[1251px]:h-[334px]"
-                >
-                  <MetricGrid
-                    metrics={[
-                      {
-                        label: 'Emissions / day',
-                        value: supply(
-                          displayed.subnetData.emissionsPerDay,
-                          'TAO',
-                        ),
-                      },
-                      {
-                        label: 'Incentive burn',
-                        value: formatPercent(
-                          displayed.subnetData.incentiveBurn === null
-                            ? null
-                            : displayed.subnetData.incentiveBurn * 100,
-                          false,
-                        ),
-                      },
-                      {
-                        label: 'Registration cost',
-                        value: supply(
-                          displayed.subnetData.registrationCost,
-                          'TAO',
-                        ),
-                      },
-                      {
-                        label: 'Active validators',
-                        value: formatInteger(
-                          displayed.subnetData.activeValidators,
-                        ),
-                      },
-                      {
-                        label: 'Active miners',
-                        value: formatInteger(displayed.subnetData.activeMiners),
-                      },
-                      {
-                        label: 'Registered keys',
-                        value: formatInteger(
-                          displayed.subnetData.registeredKeys,
-                        ),
-                      },
-                      {
-                        label: 'Key capacity',
-                        value: formatInteger(displayed.subnetData.keyCapacity),
-                      },
-                      {
-                        label: 'Registered',
-                        value: formatDate(displayed.subnetData.registeredAt),
-                      },
-                      {
-                        label: 'Next halving',
-                        value: formatDate(displayed.subnetData.nextHalving),
-                      },
-                    ]}
-                  />
-                </StatPanel>
-
-                <StatPanel
-                  title="Trading volume"
-                  titleRight={<CurrencyPreview />}
-                  className="min-[1251px]:h-[402px]"
-                >
-                  <MetricGrid
-                    layout="compact"
-                    metrics={[
-                      {
-                        label: 'Total volume',
-                        value: formatCurrencyCompact(
-                          displayed.trading.totalVolume,
-                        ),
-                      },
-                      {
-                        label: 'Net volume',
-                        value: formatCurrencyCompact(
-                          displayed.trading.netVolume,
-                        ),
-                      },
-                      {
-                        label: 'Transactions',
-                        value: formatInteger(displayed.trading.transactions),
-                      },
-                      {
-                        label: 'Total traders',
-                        value: formatInteger(displayed.trading.traders),
-                      },
-                    ]}
-                  />
-                  <TradingBars stats={displayed} />
-                </StatPanel>
-
-                <StatPanel
-                  title="Price history"
-                  titleRight={<CurrencyPreview />}
-                  className="gap-[14px] min-[1251px]:h-[196px]"
-                >
-                  <MetricGrid
-                    layout="compact"
-                    metrics={[
-                      {
-                        label: 'Current price',
-                        value: formatPrice(displayed.price.close),
-                        detail: `Open ${formatPrice(displayed.price.open)}`,
-                      },
-                      {
-                        label: 'Price change',
-                        value: (
-                          <Movement value={displayed.price.changePercent} />
-                        ),
-                        detail: formatPrice(displayed.price.change),
-                      },
-                      {
-                        label: 'Low',
-                        value: formatPrice(displayed.price.low),
-                      },
-                      {
-                        label: 'High',
-                        value: formatPrice(displayed.price.high),
-                      },
-                      {
-                        label: 'All-time high',
-                        value: formatPrice(
-                          displayed.price.allTimeHigh?.price ?? null,
-                        ),
-                        detail: formatDate(
-                          displayed.price.allTimeHigh?.timestamp ?? null,
-                        ),
-                      },
-                      {
-                        label: 'All-time low',
-                        value: formatPrice(
-                          displayed.price.allTimeLow?.price ?? null,
-                        ),
-                        detail: formatDate(
-                          displayed.price.allTimeLow?.timestamp ?? null,
-                        ),
-                      },
-                    ]}
-                  />
-                </StatPanel>
-              </div>
+              <StatsPanelGrid stats={displayed} token={token} symbol={symbol} />
             </>
           ) : null}
         </TabsContent>
