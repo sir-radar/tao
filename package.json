@@ -8,7 +8,13 @@
     "backend:build": "pnpm --filter @tao-takehome/backend build",
     "backend:start": "pnpm --filter @tao-takehome/backend start",
     "backend:test": "pnpm --filter @tao-takehome/backend test",
-    "backend:typecheck": "pnpm --filter @tao-takehome/backend typecheck"
+    "backend:typecheck": "pnpm --filter @tao-takehome/backend typecheck",
+    "web:dev": "pnpm --filter @tao-takehome/web-starter dev",
+    "web:build": "pnpm --filter @tao-takehome/web-starter build",
+    "web:start": "pnpm --filter @tao-takehome/web-starter start",
+    "web:lint": "pnpm --filter @tao-takehome/web-starter lint",
+    "web:typecheck": "pnpm --filter @tao-takehome/web-starter typecheck",
+    "web:test": "pnpm --filter @tao-takehome/web-starter test"
   },
   "packageManager": "pnpm@9.15.4",
   "engines": {

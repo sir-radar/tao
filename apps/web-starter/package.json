@@ -3,6 +3,39 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "echo \"Add your web app dev command here.\""
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "5.101.4",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lightweight-charts": "5.2.0",
+    "lucide-react": "^1.31.0",
+    "next": "16.3.0",
+    "radix-ui": "^1.6.7",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "shadcn": "4.16.2",
+    "tailwind-merge": "^3.6.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "latest",
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "16.3.0",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "eslint": "9.39.2",
+    "eslint-config-next": "16.3.0",
+    "jsdom": "25.0.1",
+    "tailwindcss": "latest",
+    "tw-animate-css": "latest",
+    "typescript": "5.9.3",
+    "vitest": "2.1.8"
   }
 }
