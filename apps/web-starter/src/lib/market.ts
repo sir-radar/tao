@@ -1,6 +1,6 @@
 import type { TokenListItem } from './api/contracts';
 
-export const SORT_KEYS = [
+const SORT_KEYS = [
   'marketCap',
   'price',
   'changePercent24h',

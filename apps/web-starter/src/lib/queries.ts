@@ -1,11 +1,15 @@
 'use client';
 
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import {
+  keepPreviousData,
+  useQuery,
+  type QueryKey,
+} from '@tanstack/react-query';
 import { marketApi } from './api/client';
 import type { HistoryRange } from './api/contracts';
 
 const MINUTE = 60_000;
-export const queryKeys = {
+const queryKeys = {
   summary: ['market', 'summary'] as const,
   tokens: ['tokens', 'list'] as const,
   detail: (id: string) => ['tokens', 'detail', id] as const,
@@ -46,31 +50,41 @@ export function useTokenDetail(id: string) {
     enabled: Boolean(id),
   });
 }
+
+function useTokenRangeQuery<Data>(
+  queryKey: QueryKey,
+  queryFn: (signal: AbortSignal) => Promise<Data>,
+  enabled: boolean,
+) {
+  return useQuery({
+    ...shared,
+    queryKey,
+    queryFn: ({ signal }) => queryFn(signal),
+    staleTime: 10 * MINUTE,
+    enabled,
+    placeholderData: keepPreviousData,
+  });
+}
+
 export function useTokenHistory(
   id: string,
   range: HistoryRange,
   enabled: boolean,
 ) {
-  return useQuery({
-    ...shared,
-    queryKey: queryKeys.history(id, range),
-    queryFn: ({ signal }) => marketApi.history(id, range, signal),
-    staleTime: 10 * MINUTE,
+  return useTokenRangeQuery(
+    queryKeys.history(id, range),
+    (signal) => marketApi.history(id, range, signal),
     enabled,
-    placeholderData: keepPreviousData,
-  });
+  );
 }
 export function useTokenStats(
   id: string,
   range: HistoryRange,
   enabled: boolean,
 ) {
-  return useQuery({
-    ...shared,
-    queryKey: queryKeys.stats(id, range),
-    queryFn: ({ signal }) => marketApi.stats(id, range, signal),
-    staleTime: 10 * MINUTE,
+  return useTokenRangeQuery(
+    queryKeys.stats(id, range),
+    (signal) => marketApi.stats(id, range, signal),
     enabled,
-    placeholderData: keepPreviousData,
-  });
+  );
 }

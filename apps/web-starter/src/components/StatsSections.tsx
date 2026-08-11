@@ -463,7 +463,7 @@ function StatsPanelGrid({
   );
 }
 
-export function StatsSkeleton() {
+function StatsSkeleton() {
   return (
     <div className="grid grid-cols-2 gap-6 max-[1250px]:grid-cols-1">
       <Skeleton className="col-span-2 h-[236px] rounded-2xl max-[1250px]:col-span-1" />

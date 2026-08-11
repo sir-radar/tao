@@ -75,8 +75,3 @@ export function formatDate(value: string | null) {
       }).format(new Date(value))
     : '—';
 }
-export function formatUpdated(value: string | null) {
-  return value
-    ? `${new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' }).format(new Date(value))} UTC`
-    : 'Update time unavailable';
-}

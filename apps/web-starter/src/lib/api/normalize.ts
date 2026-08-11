@@ -1,5 +1,4 @@
 import {
-  HISTORY_RANGES,
   PayloadError,
   type HistoryRange,
   type HistorySeries,
@@ -31,11 +30,20 @@ function dateText(value: unknown): string | null {
   return candidate && Number.isFinite(Date.parse(candidate)) ? candidate : null;
 }
 
-export function isHistoryRange(value: unknown): value is HistoryRange {
-  return (
-    typeof value === 'string' &&
-    (HISTORY_RANGES as readonly string[]).includes(value)
-  );
+function normalizeUniqueItems<Item, Key>(
+  values: unknown[],
+  normalizeItem: (value: unknown) => Item | null,
+  getKey: (item: Item) => Key,
+  unusableMessage: string,
+): Item[] {
+  const unique = new Map<Key, Item>();
+  for (const value of values) {
+    const item = normalizeItem(value);
+    if (item) unique.set(getKey(item), item);
+  }
+  if (values.length > 0 && unique.size === 0)
+    throw new PayloadError(unusableMessage);
+  return [...unique.values()];
 }
 
 export function normalizeMarketSummary(value: unknown): MarketSummary {
@@ -93,14 +101,12 @@ export function normalizeTokenList(value: unknown): TokenListItem[] {
   const source = object(value);
   if (!source || !Array.isArray(source.tokens))
     throw new PayloadError('Token list was malformed.');
-  const unique = new Map<string, TokenListItem>();
-  for (const item of source.tokens) {
-    const token = normalizeToken(item);
-    if (token) unique.set(token.id, token);
-  }
-  if (source.tokens.length > 0 && unique.size === 0)
-    throw new PayloadError('Token list contained no usable rows.');
-  return [...unique.values()];
+  return normalizeUniqueItems(
+    source.tokens,
+    normalizeToken,
+    (token) => token.id,
+    'Token list contained no usable rows.',
+  );
 }
 
 export function normalizeTokenDetail(
@@ -155,19 +161,18 @@ export function normalizeHistory(
   ) {
     throw new PayloadError('Price history did not match this token and range.');
   }
-  const points = new Map<number, PricePoint>();
-  for (const item of source.points) {
-    const point = normalizePoint(item);
-    if (point) points.set(point.time, point);
-  }
-  if (source.points.length > 0 && points.size === 0)
-    throw new PayloadError('Price history contained no usable points.');
+  const points = normalizeUniqueItems(
+    source.points,
+    normalizePoint,
+    (point) => point.time,
+    'Price history contained no usable points.',
+  );
   return {
     id,
     symbol: text(source.symbol),
     range: expectedRange,
     generatedAt: dateText(source.generatedAt),
-    points: [...points.values()].sort((a, b) => a.time - b.time),
+    points: points.sort((a, b) => a.time - b.time),
   };
 }
 
