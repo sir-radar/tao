@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { CircleDollarSign, SlidersHorizontal, X } from 'lucide-react';
+import { CircleDollarSign, X } from 'lucide-react';
 import type { TokenDetail, TokenStats } from '@/lib/api/contracts';
 import {
   formatCompact,
@@ -136,7 +136,14 @@ export function TradingRail({
             </span>
           </div>
           <span className="flex size-9 items-center justify-center rounded-[14px] border border-white/8 bg-card">
-            <SlidersHorizontal className="size-4" aria-hidden="true" />
+            <Image
+              src="/assets/market-controls/settings-2.svg"
+              alt=""
+              width={16}
+              height={16}
+              className="size-4"
+              aria-hidden="true"
+            />
           </span>
         </div>
 
