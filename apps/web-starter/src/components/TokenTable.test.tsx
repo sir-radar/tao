@@ -57,5 +57,11 @@ describe('TokenTable', () => {
     expect(downArrow).toBeInTheDocument();
     expect(downArrow?.querySelector('path')).toHaveAttribute('fill', '#FF7D78');
     expect(upArrow?.querySelector('path')).toHaveAttribute('fill', '#5FC41F');
+    const emissionsCell = screen.getByRole('cell', {
+      name: /0\.55 tao per day/i,
+    });
+    expect(
+      emissionsCell.querySelector('svg[data-trend-arrow="up"]'),
+    ).toBeInTheDocument();
   });
 });

@@ -2,13 +2,7 @@
 
 import { memo, useMemo } from 'react';
 import Link from 'next/link';
-import {
-  ArrowDown,
-  ArrowUp,
-  ArrowUpDown,
-  ArrowUpRight,
-  MoreHorizontal,
-} from 'lucide-react';
+import { ArrowDown, ArrowUp, ArrowUpDown, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -29,6 +23,7 @@ import {
 } from '@/lib/format';
 import { sortTokens, type SortDirection, type SortKey } from '@/lib/market';
 import { Movement } from './Movement';
+import { TrendArrowIcon } from './TrendArrowIcon';
 
 type TokenTableProps = {
   tokens: readonly TokenListItem[];
@@ -73,7 +68,7 @@ function Emissions({ value }: { value: number | null }) {
   if (value === null) return <span className="text-muted-foreground">—</span>;
   return (
     <span className="inline-flex items-center gap-0.5 text-positive tabular">
-      <ArrowUpRight className="size-3" aria-hidden="true" />
+      <TrendArrowIcon direction="up" />
       {formatDecimal(value)}
       <span className="sr-only">TAO per day</span>
     </span>
