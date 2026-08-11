@@ -249,7 +249,11 @@ const TokenRow = memo(function TokenRow({
       <TableCell className="h-14 w-[140px] px-4 py-0">
         <SwapPreview tokenName={token.name} />
       </TableCell>
-      <TableCell className="sticky right-0 z-30 h-14 w-[52px] border-l border-white/8 bg-background px-4 py-0 group-hover:bg-[#121018]">
+      <TableCell
+        className={`sticky right-0 h-14 w-[52px] border-l border-white/8 bg-background px-4 py-0 group-hover:bg-[#121018] ${
+          menuOpen ? 'z-50' : 'z-30'
+        }`}
+      >
         <div className="relative flex h-full w-5 items-center justify-center">
           <button
             type="button"

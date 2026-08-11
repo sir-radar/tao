@@ -96,4 +96,36 @@ describe('TokenTable', () => {
     fireEvent.click(moreButton);
     expect(screen.queryByRole('menu')).not.toBeInTheDocument();
   });
+
+  it('raises the active action cell above neighboring row actions', () => {
+    const table = render(
+      <TokenTable
+        tokens={[
+          sample,
+          {
+            ...sample,
+            id: 'beta-token',
+            name: 'Beta Token',
+            marketCap: 11_000_000,
+          },
+        ]}
+        sortKey="marketCap"
+        direction="desc"
+        onSort={vi.fn()}
+      />,
+    );
+
+    const renderedTable = within(table.container);
+    const activeButton = renderedTable.getByRole('button', {
+      name: /more actions for alpha token/i,
+    });
+    const neighboringButton = renderedTable.getByRole('button', {
+      name: /more actions for beta token/i,
+    });
+
+    fireEvent.click(activeButton);
+
+    expect(activeButton.closest('td')).toHaveClass('z-50');
+    expect(neighboringButton.closest('td')).toHaveClass('z-30');
+  });
 });
