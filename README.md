@@ -4,9 +4,9 @@
 
 This repository contains a desktop token exchange interface for TAO subnet markets. The implementation covers two routes:
 
-| Route | Purpose |
-| --- | --- |
-| `/` | Market summary and a sortable table containing all 250 tokens |
+| Route         | Purpose                                                                     |
+| ------------- | --------------------------------------------------------------------------- |
+| `/`           | Market summary and a sortable table containing all 250 tokens               |
 | `/tokens/:id` | Token price history, range-based stats, and a disabled trading preview rail |
 
 Explore keeps its sort state in `sort` and `dir` URL parameters. Token Details keeps the selected history range in `range` and uses `24h` by default. Invalid parameters return to the documented defaults.
@@ -81,7 +81,7 @@ The connected Figma identity lacked editor access to file `ShGOnid4sBkwGybMICX0q
 - Explore condensed: `5:2035`
 - Token Details Stats: `5:4313`
 
-I used the supplied PNG exports, CSS exports, logo, movement arrows, and SVG files as the visual fallback. They support the dark palette, dense table, compact type scale, restrained borders, chart placement, and fixed desktop trading rail. I could not access reusable product assets, so token identity uses initials and generic Lucide action icons. I did not fabricate a logo or subnet artwork.
+I used PNG screenshot images, CSS exports, TAO logo, movement arrows, and control, link, and trading SVGs to match the dark palette, dense table, compact type scale, restrained borders, chart placement, and fixed desktop trading rail. I could not retrieve per-token artwork or reusable components, so token identity uses initials and Lucide icons fill action slots without supplied assets. I did not fabricate token or subnet artwork.
 
 The Explore page follows the frame's measured geometry:
 
@@ -134,7 +134,7 @@ Production browser checks covered:
 
 I switched ranges in quick succession and confirmed the last selection stayed current. I stopped the backend, confirmed two independent Explore errors, restarted it, and recovered both sections through their Retry buttons.
 
-The final cleanup browser checks covered Explore at 1728x1117, 1280x900, and 1024x1117, plus Token Details at 1024x1117. Explore loaded all 250 token links at each width and produced no document overflow. Token Details loaded `Gradients` at `24h`, rendered the chart canvases and disabled controls, and produced no application console warnings or errors.
+Across browser verification passes, Token Details also ran at 1920x1080, 1728x1117, and 1280x900. The final cleanup pass repeated Explore at 1728x1117, 1280x900, and 1024x1117, plus Token Details at 1024x1117. Explore loaded all 250 token links at each width and produced no document overflow. Token Details loaded `Gradients` at `24h`, rendered the chart canvases and disabled controls, and produced no application console warnings or errors.
 
 ## Tradeoffs and known limits
 

@@ -4,13 +4,15 @@
 
 I used Codex to inspect the repository, plan the work, edit code, run checks, and control the local production app in a browser. I split the implementation into repository setup, Explore, Token Details, resilience, documentation, and cleanup passes. The repository's `AGENTS.md` required a review pause after each milestone.
 
-The Figma design-context workflow attempted to read file `ShGOnid4sBkwGybMICX0qh`, nodes `5:678`, `5:2035`, and `5:4313`. The connected identity lacked editor access, so the workflow stopped after the file-level error. The Stats request returned debug UUID `22c5e20b-1330-46e9-a4d0-2febe270ff71`. I inspected the supplied PNG exports, CSS exports, logo, movement arrows, and SVG files instead and recorded the access gap in the README.
+The Figma design-context workflow attempted to read file `ShGOnid4sBkwGybMICX0qh`, nodes `5:678`, `5:2035`, and `5:4313`. The connected identity lacked editor access, so the workflow stopped after the file-level error. The Stats request returned debug UUID `22c5e20b-1330-46e9-a4d0-2febe270ff71`. I inspected the supplied PNG and CSS exports plus the TAO logo, movement, control, token-link, and trading SVGs instead and recorded the access gap in the README.
 
 The frontend-design and frontend-skill guidance shaped the dense exchange layout, visual hierarchy, responsive composition, and decision to keep the market surface flat. The stop-slop skill guided the documentation edit.
 
 Browser control exercised the running app, route states, keyboard behavior, request failures, document overflow, and console output. I used shadcn's documented Next.js, theming, Table, and Toggle Group patterns. I pinned initialization to `pnpm dlx shadcn@4.16.0`; pnpm resolved the installed package to `shadcn@4.16.2`.
 
 I used Fallow 3.14.0 for a frontend-only static cleanup pass. Its dead-code graph found three unreachable UI files and 19 unused exports. I used its dry-run fixer and trace commands before changing code, then compared mild and semantic duplicate reports before and after cleanup.
+
+After a browser extension injected attributes into the root elements, I added React's `suppressHydrationWarning` to `<html>` and `<body>` to prevent extension-only hydration warnings without changing application behavior.
 
 ## Workflow
 
@@ -46,7 +48,7 @@ Each milestone ended with focused checks, a diff audit, and a commit. I kept the
 - I kept backend-driven market values instead of copying placeholder numbers from the screenshot.
 - I omitted screenshot trend badges when the API did not supply a matching percentage change.
 - I kept market-cap sorting even though synthetic filler tokens can outrank the featured ten. Reordering the result would make the active sort label inaccurate.
-- I rejected product logos, generated token artwork, subnet logos, and social brand marks because I could not access the Figma assets.
+- I rejected generated token and subnet artwork plus unprovided brand marks because I could not retrieve those Figma assets. I kept the supplied TAO logo and SVG assets for market controls, token links, and the trading rail.
 - I rejected TanStack Table, Zod, a second icon package, animation packages, wallet behavior, and functional trading controls. None reduced P0 risk enough to justify the added surface.
 - I replaced the first Token Details layout after browser measurements showed that it was 36px wider than the page. A fieldset's intrinsic width caused the overflow; setting an explicit zero minimum restored the 430px rail.
 - I rejected semantic clone suggestions across alert and table primitives because each wrapper preserves different HTML semantics and prop types.
@@ -82,7 +84,7 @@ Production browser checks covered:
 
 I switched ranges in quick succession and confirmed the last selection stayed current. I stopped the backend, confirmed two independent Explore errors, restarted it, and recovered both sections through their Retry buttons.
 
-Visual checks used Explore at 1728x1117, 1024x1117, and 1280x900. Token Details checks added 1920x1080 and reused the three desktop widths. They checked document overflow, frame geometry, stat panel bounds, the disabled rail, range URLs, last-choice behavior, keyboard activation, accessible names, and console output. The icon pass checked each asset source, 16x16 rendered and natural dimensions, load completion, and console output at 1024x1117.
+Across browser verification passes, Explore ran at 1728x1117, 1024x1117, and 1280x900. Token Details ran at 1920x1080 and the same three desktop widths. The final cleanup pass repeated Explore at those three widths and Token Details at 1024x1117. The checks covered document overflow, frame geometry, stat panel bounds, the disabled rail, range URLs, last-choice behavior, keyboard activation, accessible names, and console output. The icon pass checked each asset source, 16x16 rendered and natural dimensions, load completion, and console output at 1024x1117.
 
 Cleanup checks:
 
