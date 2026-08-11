@@ -18,16 +18,25 @@ import { ResourceError } from './ResourceState';
 import { StatsSections } from './StatsSections';
 import { TradingRail } from './TradingRail';
 
+function PriceHeaderDivider() {
+  return (
+    <div className="detail-page-width -mt-px h-px" aria-hidden="true">
+      <div className="h-px bg-border" />
+    </div>
+  );
+}
+
 export function TokenDetailSkeleton() {
   return (
     <main id="main" className="flex-1" aria-label="Loading token details">
-      <div className="detail-page-width flex h-[164px] flex-col justify-between border-b py-6">
+      <div className="detail-page-width flex h-[164px] flex-col justify-between py-6">
         <Skeleton className="h-4 w-32" />
         <div className="flex items-center gap-3">
           <Skeleton className="size-12 rounded-full" />
           <Skeleton className="h-8 w-48" />
         </div>
       </div>
+      <PriceHeaderDivider />
       <div className="detail-page-width grid grid-cols-[minmax(0,1fr)_clamp(320px,22.4vw,430px)] items-start gap-10 max-[1400px]:gap-6 max-[980px]:grid-cols-1">
         <div className="space-y-6">
           <Skeleton className="h-[542px] w-full rounded-none" />
@@ -144,6 +153,7 @@ export function TokenDetailPage({ id }: { id: string }) {
   return (
     <main id="main" className="flex-1">
       <PriceHeader token={token} />
+      <PriceHeaderDivider />
       <div className="detail-page-width grid grid-cols-[minmax(0,1fr)_clamp(320px,22.4vw,430px)] items-start gap-10 max-[1400px]:gap-6 max-[980px]:grid-cols-1">
         <div className="min-w-0 space-y-6">
           <ChartPanel
