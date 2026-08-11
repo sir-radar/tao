@@ -6,3 +6,10 @@ coverage/
 *.log
 REVIEWER_GUIDE.md
 RUBRIC.md
+
+/plugins/
+/.agents/
+/.codex/
+
+AGENTS.md
+.fallow
