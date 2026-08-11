@@ -1,29 +1,25 @@
 import { Suspense } from 'react';
-import {
-  BarChart3,
-  Network,
-  SlidersHorizontal,
-  Star,
-  TrendingDown,
-  TrendingUp,
-  Trophy,
-  type LucideIcon,
-} from 'lucide-react';
+import Image from 'next/image';
+import { SlidersHorizontal } from 'lucide-react';
 import { MarketSummary } from './MarketSummary';
 import { TokenMarkets } from './TokenMarkets';
 import { TokenTableSkeleton } from './TokenTable';
 
 const marketViews: ReadonlyArray<{
   label: string;
-  icon: LucideIcon;
+  iconSrc: string;
   current?: boolean;
 }> = [
-  { label: 'Top', icon: Trophy, current: true },
-  { label: 'Watchlist', icon: Star },
-  { label: 'Popular', icon: BarChart3 },
-  { label: 'Gainers', icon: TrendingUp },
-  { label: 'Losers', icon: TrendingDown },
-  { label: 'All Subnets', icon: Network },
+  {
+    label: 'Top',
+    iconSrc: '/assets/market-views/champion.svg',
+    current: true,
+  },
+  { label: 'Watchlist', iconSrc: '/assets/market-views/star.svg' },
+  { label: 'Popular', iconSrc: '/assets/market-views/chart-01.svg' },
+  { label: 'Gainers', iconSrc: '/assets/market-views/chart-up.svg' },
+  { label: 'Losers', iconSrc: '/assets/market-views/chart-down.svg' },
+  { label: 'All Subnets', iconSrc: '/assets/market-views/profile.svg' },
 ];
 
 export function ExplorePage() {
@@ -39,7 +35,7 @@ export function ExplorePage() {
           tabIndex={0}
         >
           <ul className="flex h-[46px] items-stretch gap-4 text-lg font-medium text-muted-foreground">
-            {marketViews.map(({ label, icon: Icon, current }) => (
+            {marketViews.map(({ label, iconSrc, current }) => (
               <li
                 key={label}
                 className={`flex h-[46px] shrink-0 items-center justify-center gap-2 px-2 py-2.5 ${
@@ -47,7 +43,14 @@ export function ExplorePage() {
                 }`}
                 aria-current={current ? 'page' : undefined}
               >
-                <Icon className="size-4" aria-hidden="true" />
+                <Image
+                  src={iconSrc}
+                  alt=""
+                  width={16}
+                  height={16}
+                  className="size-4 shrink-0"
+                  aria-hidden="true"
+                />
                 {label}
               </li>
             ))}

@@ -58,7 +58,7 @@ The Explore page uses the frame's measured geometry:
 
 At 1024px, the layout uses 24px gutters, six 149.33px market cards, the icon-only 36px search control, and the complete Download and wallet controls. Numeric table columns condense from 122.22px to 100px so the initial viewport exposes Price, all three movement periods, 24H Net Volume, and Buy Volume before the sticky action rail.
 
-The header uses the supplied TAO.com logo. Market-summary badges use the supplied 12px up and down arrows. The source material did not include token-logo files, so token rows retain neutral initial avatars instead of fabricated subnet marks. The CSS export names Haffer, but the repository contains no Haffer font file; the font stack uses Haffer when installed and falls back to Inter or the system sans-serif.
+The header uses the supplied TAO.com logo. Market-summary badges use the supplied 12px up and down arrows, and the market-view tabs render the six supplied 16px SVGs. The source material did not include token-logo files, so token rows retain neutral initial avatars instead of fabricated subnet marks. The CSS export names Haffer, but the repository contains no Haffer font file; the font stack uses Haffer when installed and falls back to Inter or the system sans-serif.
 
 Row menus are closed by default and open beneath the active row's ellipsis button. They expose disabled preview actions only. Transaction counts use ungrouped digits to match the supplied table treatment.
 
