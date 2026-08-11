@@ -1,6 +1,5 @@
 import { Suspense } from 'react';
 import Image from 'next/image';
-import { SlidersHorizontal } from 'lucide-react';
 import { MarketSummary } from './MarketSummary';
 import { TokenMarkets } from './TokenMarkets';
 import { TokenTableSkeleton } from './TokenTable';
@@ -64,7 +63,14 @@ export function ExplorePage() {
             className="flex size-11 items-center justify-center rounded-[14px] bg-secondary text-foreground disabled:opacity-100"
             aria-label="Market filters preview"
           >
-            <SlidersHorizontal className="size-4" aria-hidden="true" />
+            <Image
+              src="/assets/market-controls/settings-2.svg"
+              alt=""
+              width={16}
+              height={16}
+              className="size-4"
+              aria-hidden="true"
+            />
           </button>
           <div
             className="flex h-11 w-[127px] rounded-2xl bg-secondary p-1 text-sm font-medium"

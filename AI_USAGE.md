@@ -12,7 +12,7 @@ I requested Figma design context for the condensed node `5:2035` in file `ShGOni
 
 I read the briefs, package manifests, backend token generation, API normalization, current components, and tests before editing. I mapped the frame to the header, market band, view controls, table, menu, and footer. I corrected the condensed geometry while retaining API resilience, stable sorting, links, and all 250 rows.
 
-For the market-view icon update, I compared SHA-256 hashes before and after adding the six user-provided SVGs. The hashes matched, so the repository copies preserve the supplied bytes.
+For the icon updates, I compared SHA-256 hashes before and after adding the six user-provided market-view SVGs and `Settings2.svg`. The hashes matched, so the repository copies preserve the supplied bytes.
 
 The 1024px browser check reported a 976px content region at x=24, six 149.33px market cards, a table at y=290, a 604px table viewport, a 199×112 row menu at x=791.5/y=549.5, and the footer at y=1033. The condensed header placed its search, Download, and wallet controls at x=674, x=726, and x=856, matching the CSS export after accounting for the screenshot's frame outline.
 
@@ -20,7 +20,7 @@ The 1024px browser check reported a 976px content region at x=24, six 149.33px m
 
 I accepted these generated changes after inspection:
 
-- exact SVG assets under `apps/web-starter/public/assets`, including the six market-view glyphs
+- exact SVG assets under `apps/web-starter/public/assets`, including the market-view and filter glyphs
 - a 604px scroll region that keeps all 250 rows while matching ten visible rows
 - URL-backed sorting and accessible row links from the existing implementation
 - a closed-by-default row menu anchored beneath the active ellipsis button
@@ -35,4 +35,4 @@ I rewrote or rejected these proposals:
 
 ## Verification
 
-I reviewed the diff and preserved the user's existing `.gitignore` change. I ran strict type checking, component and data tests, lint and formatting checks, backend checks, and production builds. Browser checks used 1728×1117, 1024×1117, and 1280×900 viewports. They checked document overflow, element geometry, the row-menu state, sort URLs, `aria-sort`, and console warnings. The icon pass checked each asset source, 16×16 rendered and natural dimensions, load completion, and console output at 1024×1117.
+I reviewed the diff and preserved the user's existing `.gitignore` change. I ran strict type checking, component and data tests, lint and formatting checks, backend checks, and production builds. Browser checks used 1728×1117, 1024×1117, and 1280×900 viewports. They checked document overflow, element geometry, the row-menu state, sort URLs, `aria-sort`, and console warnings. The icon pass checked each asset source, 16×16 rendered and natural dimensions, load completion, and console output at 1024×1117. The filter check confirmed the 44px control at x=813/y=229 and its centered 16px icon.
