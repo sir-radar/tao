@@ -22,7 +22,7 @@ const token: TokenDetail = {
 
 describe('TradingRail', () => {
   it('keeps every trading control disabled and exposes preview context', () => {
-    render(<TradingRail token={token} />);
+    const { container } = render(<TradingRail token={token} />);
 
     expect(screen.getByText('Preview only')).toBeInTheDocument();
     expect(screen.getByRole('group')).toBeDisabled();
@@ -31,5 +31,13 @@ describe('TradingRail', () => {
     expect(
       screen.getByRole('button', { name: 'Enter an amount' }),
     ).toBeDisabled();
+    expect(
+      screen.getByLabelText('Up 11.27% over 24 hours'),
+    ).toBeInTheDocument();
+    expect(
+      Array.from(container.querySelectorAll('img')).filter((image) =>
+        image.src.includes('arrow-up-01.svg'),
+      ),
+    ).toHaveLength(2);
   });
 });

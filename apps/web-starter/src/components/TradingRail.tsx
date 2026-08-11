@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import {
   ArrowDown,
   CircleDollarSign,
@@ -177,8 +178,18 @@ export function TradingRail({
             <strong className="block text-xl font-medium leading-8 tabular">
               $2,450.90
             </strong>
-            <small className="block text-sm leading-[22px] text-positive">
-              ↑ 11.27% 24H
+            <small
+              className="flex items-center justify-end text-sm leading-[22px] text-positive"
+              aria-label="Up 11.27% over 24 hours"
+            >
+              <Image
+                src="/assets/trading/arrow-up-01.svg"
+                alt=""
+                width={20}
+                height={20}
+                aria-hidden="true"
+              />
+              <span>11.27% 24H</span>
             </small>
           </span>
         </div>
@@ -189,7 +200,7 @@ export function TradingRail({
               'Token APY',
               formatPercent(stats?.financials.averageStakeApy ?? null, false),
             ],
-            ['Earned tokens', `↑ 35.999212 ${symbol}`],
+            ['Earned tokens', `35.999212 ${symbol}`],
             ['Unrealized return', '+$450.90'],
             ['Realized return', '—'],
           ].map(([label, value], index) => (
@@ -205,6 +216,16 @@ export function TradingRail({
                     : 'tabular'
                 }
               >
+                {index === 2 && (
+                  <Image
+                    src="/assets/trading/arrow-up-01.svg"
+                    alt=""
+                    width={20}
+                    height={20}
+                    className="inline-block align-[-5px]"
+                    aria-hidden="true"
+                  />
+                )}
                 {value}
               </dd>
             </div>
