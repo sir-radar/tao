@@ -1,10 +1,5 @@
 import Image from 'next/image';
-import {
-  ArrowDown,
-  CircleDollarSign,
-  SlidersHorizontal,
-  X,
-} from 'lucide-react';
+import { CircleDollarSign, SlidersHorizontal, X } from 'lucide-react';
 import type { TokenDetail, TokenStats } from '@/lib/api/contracts';
 import {
   formatCompact,
@@ -48,16 +43,18 @@ function SwapTile({
     <div className="flex h-[156px] flex-col gap-3 rounded-3xl bg-[#201e29] p-5">
       <div className="flex h-[22px] items-center justify-between text-base font-medium leading-[22px]">
         <span>{side}</span>
-        {sell && <span className="text-sm text-primary">25% · 50% · Max</span>}
+        {sell && (
+          <span className="text-base text-primary">25% · 50% · Max</span>
+        )}
       </div>
       <div className="flex h-12 items-center gap-3">
         <input
           aria-label={`${side} amount`}
           value="0"
           readOnly
-          className="min-w-0 flex-1 border-0 bg-transparent p-0 text-4xl font-medium leading-10 tabular text-foreground outline-none disabled:opacity-100"
+          className="min-w-0 flex-1 border-0 bg-transparent p-0 text-5xl font-medium leading-none tracking-[-0.03em] tabular text-foreground outline-none disabled:opacity-100"
         />
-        <span className="flex h-12 items-center gap-3 rounded-[32px] border border-white/8 bg-card py-2 pl-2 pr-4 text-sm font-medium">
+        <span className="flex h-12 items-center gap-3 rounded-[32px] border border-white/8 bg-card py-2 pl-2 pr-4 text-base font-medium">
           {sell ? (
             <span className="flex size-8 items-center justify-center rounded-full bg-white text-sm font-semibold text-black">
               τ
@@ -68,9 +65,14 @@ function SwapTile({
           {sell ? 'TAO' : symbol}
         </span>
       </div>
-      <div className="flex h-[22px] items-center justify-between text-sm leading-[22px] text-muted-foreground">
+      <div className="flex h-[22px] items-center justify-between text-base leading-[22px] text-muted-foreground">
         <span>$0</span>
-        <span>Balance: {sell ? '19.432112 TAO' : `0.00 ${symbol}`}</span>
+        <span>
+          Balance:{' '}
+          <strong className="font-medium text-foreground">
+            {sell ? '19.432112' : '0.00'}
+          </strong>
+        </span>
       </div>
     </div>
   );
@@ -140,8 +142,14 @@ export function TradingRail({
           </p>
           <div className="relative flex h-80 flex-col gap-2">
             <SwapTile side="Sell" token={token} symbol={symbol} />
-            <span className="absolute left-1/2 top-1/2 z-10 flex size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/8 bg-card shadow-lg">
-              <ArrowDown className="size-4" aria-hidden="true" />
+            <span className="absolute left-1/2 top-1/2 z-10 flex size-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-[4px] border-background bg-secondary shadow-[0_8px_18px_rgba(0,0,0,0.35)]">
+              <Image
+                src="/assets/swap/arrow-down.svg"
+                alt=""
+                width={11}
+                height={11}
+                aria-hidden="true"
+              />
             </span>
             <SwapTile side="Buy" token={token} symbol={symbol} />
           </div>
