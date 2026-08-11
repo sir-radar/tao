@@ -1,7 +1,7 @@
-import Image from 'next/image';
 import { ArrowDownRight, ArrowUpRight, Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatPercent } from '@/lib/format';
+import { TrendArrowIcon } from './TrendArrowIcon';
 
 export function Movement({
   value,
@@ -30,14 +30,7 @@ export function Movement({
       {neutral ? (
         <Minus className="size-3" aria-hidden="true" />
       ) : tableStyle ? (
-        <Image
-          src={positive ? '/icons/arrow-up-01.svg' : '/icons/arrow-down-01.svg'}
-          alt=""
-          width={16}
-          height={16}
-          unoptimized
-          aria-hidden="true"
-        />
+        <TrendArrowIcon direction={positive ? 'up' : 'down'} />
       ) : (
         <DirectionIcon className="size-3" aria-hidden="true" />
       )}

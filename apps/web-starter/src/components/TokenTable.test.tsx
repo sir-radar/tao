@@ -52,8 +52,10 @@ describe('TokenTable', () => {
     ).toHaveAttribute('tabindex', '0');
     expect(screen.getByText('1.25%')).toBeInTheDocument();
     expect(screen.queryByText('-1.25%')).not.toBeInTheDocument();
-    expect(
-      container.querySelector('img[src="/icons/arrow-down-01.svg"]'),
-    ).toBeInTheDocument();
+    const downArrow = container.querySelector('svg[data-trend-arrow="down"]');
+    const upArrow = container.querySelector('svg[data-trend-arrow="up"]');
+    expect(downArrow).toBeInTheDocument();
+    expect(downArrow?.querySelector('path')).toHaveAttribute('fill', '#FF7D78');
+    expect(upArrow?.querySelector('path')).toHaveAttribute('fill', '#5FC41F');
   });
 });
