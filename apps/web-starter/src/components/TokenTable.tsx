@@ -112,13 +112,13 @@ const TokenRow = memo(function TokenRow({ token }: { token: TokenListItem }) {
         {formatPrice(token.price)}
       </TableCell>
       <TableCell>
-        <Movement value={token.changePercent24h} />
+        <Movement value={token.changePercent24h} variant="table" />
       </TableCell>
       <TableCell>
-        <Movement value={token.changePercent7d} />
+        <Movement value={token.changePercent7d} variant="table" />
       </TableCell>
       <TableCell>
-        <Movement value={token.changePercent30d} />
+        <Movement value={token.changePercent30d} variant="table" />
       </TableCell>
       <TableCell className="text-muted-foreground tabular">
         {formatCurrencyCompact(token.netVolume24h)}

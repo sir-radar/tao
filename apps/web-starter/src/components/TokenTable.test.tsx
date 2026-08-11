@@ -23,7 +23,7 @@ const sample: TokenListItem = {
 describe('TokenTable', () => {
   it('exposes semantic sorting and an accessible token route', () => {
     const onSort = vi.fn();
-    render(
+    const { container } = render(
       <TokenTable
         tokens={[sample]}
         sortKey="marketCap"
@@ -50,5 +50,10 @@ describe('TokenTable', () => {
     expect(
       screen.getByRole('region', { name: /token markets table/i }),
     ).toHaveAttribute('tabindex', '0');
+    expect(screen.getByText('1.25%')).toBeInTheDocument();
+    expect(screen.queryByText('-1.25%')).not.toBeInTheDocument();
+    expect(
+      container.querySelector('img[src="/icons/arrow-down-01.svg"]'),
+    ).toBeInTheDocument();
   });
 });
