@@ -11,7 +11,7 @@ export function AppHeader() {
   return (
     <header className="h-[72px] border-b border-white/8 bg-background">
       <div className="page-width flex h-full items-center">
-        <div className="flex items-center gap-14 max-[1260px]:gap-8 max-[1050px]:gap-5">
+        <div className="flex items-center gap-14 max-[900px]:gap-6">
           <Link
             href="/"
             className="shrink-0 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
@@ -32,7 +32,7 @@ export function AppHeader() {
             <Link
               href="/"
               className={cn(
-                'flex h-[26px] w-[100px] items-end gap-2 px-3 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring max-[1050px]:w-auto max-[1050px]:px-2',
+                'flex h-[26px] w-[100px] items-end gap-2 px-3 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring',
                 exploreActive && 'text-foreground',
               )}
             >
@@ -45,7 +45,7 @@ export function AppHeader() {
               )}
             </Link>
             <span
-              className="flex h-[26px] w-[84px] items-end justify-center px-3 text-muted-foreground max-[1050px]:w-auto max-[1050px]:px-2"
+              className="flex h-[26px] w-[84px] items-end justify-center px-3 text-muted-foreground"
               aria-disabled="true"
             >
               Swap
@@ -61,7 +61,7 @@ export function AppHeader() {
 
         <div className="ml-auto flex items-center gap-4">
           <div
-            className="flex h-10 w-[270px] items-center gap-2.5 rounded-2xl bg-secondary px-4 text-sm text-muted-foreground max-[1260px]:w-10 max-[1260px]:justify-center max-[1260px]:px-0"
+            className="flex h-10 w-[270px] items-center gap-2.5 rounded-2xl bg-secondary px-4 text-sm text-muted-foreground max-[1260px]:size-9 max-[1260px]:justify-center max-[1260px]:border max-[1260px]:border-white/8 max-[1260px]:bg-black/20 max-[1260px]:px-0"
             aria-label="Search preview"
             aria-disabled="true"
           >
@@ -72,14 +72,14 @@ export function AppHeader() {
             <button
               type="button"
               disabled
-              className="flex h-10 w-[122px] items-center justify-center rounded-[14px] border border-white/20 text-base font-medium text-foreground disabled:opacity-100 max-[1050px]:w-[98px]"
+              className="flex h-10 w-[122px] items-center justify-center rounded-[14px] border border-white/20 text-base font-medium text-foreground transition-colors hover:border-white/30 disabled:opacity-100"
             >
               Download
             </button>
             <button
               type="button"
               disabled
-              className="flex h-10 w-36 items-center justify-center gap-2 whitespace-nowrap rounded-[14px] bg-primary px-3 text-sm font-medium text-secondary disabled:opacity-100 max-[1260px]:hidden"
+              className="flex h-10 w-36 items-center justify-center gap-2 whitespace-nowrap rounded-[14px] bg-primary px-3 text-sm font-medium text-secondary disabled:opacity-100 max-[900px]:hidden"
               aria-label="Wallet preview: 1 wallet"
             >
               <span

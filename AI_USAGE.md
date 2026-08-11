@@ -4,15 +4,15 @@
 
 I used Codex to inspect the repository, translate the supplied frame evidence into React and Tailwind changes, run local checks, and compare browser measurements against the reference image.
 
-The `frontend-skill` guidance set the visual thesis and kept the page focused on one dense exchange workspace. The `stop-slop` guidance shaped this write-up. The in-app browser measured element rectangles, captured the three target widths, exercised sorting and the row menu, and checked console output.
+The `frontend-skill` guidance kept the page focused on one dense exchange workspace. The `stop-slop` guidance shaped this write-up. The in-app browser measured element rectangles at the three target widths, exercised sorting and the row menu, and checked console output.
 
-I requested Figma design context for node `5:678` in file `ShGOnid4sBkwGybMICX0qh`. The connected identity lacked editor access, so I stopped after the first failed call. The supplied screenshot, 20,575-line CSS export, logo, and movement arrows supplied the design evidence for the implementation.
+I requested Figma design context for the condensed node `5:2035` in file `ShGOnid4sBkwGybMICX0qh`. The connected identity lacked editor access, so I stopped after that failed call. The supplied screenshot, 20,483-line CSS export, logo, and movement arrows supplied the design evidence for this pass.
 
 ## Workflow
 
-I read the briefs, package manifests, backend token generation, API normalization, current components, and tests before editing. I mapped the frame to measured regions: header, market band, view controls, table, menu, and footer. I then replaced the mismatched geometry and assets while retaining API resilience, stable sorting, links, and all 250 rows.
+I read the briefs, package manifests, backend token generation, API normalization, current components, and tests before editing. I mapped the frame to the header, market band, view controls, table, menu, and footer. I corrected the condensed geometry while retaining API resilience, stable sorting, links, and all 250 rows.
 
-The first browser check exposed a stale server process that still served the pre-change build. I stopped that process, restarted the web app on port 3000, and repeated the capture. Browser evaluation then reported the expected 1728px measurements: 72px header, 1600px content at x=64, table at y=290 with a 604px height, activated menu at x=1455/y=549 sized 199×112, and footer at y=1033.
+The 1024px browser check reported a 976px content region at x=24, six 149.33px market cards, a table at y=290, a 604px table viewport, a 199×112 row menu at x=791.5/y=549.5, and the footer at y=1033. The condensed header placed its search, Download, and wallet controls at x=674, x=726, and x=856, matching the CSS export after accounting for the screenshot's frame outline.
 
 ## Accepted and reworked suggestions
 
@@ -22,7 +22,7 @@ I accepted these generated changes after inspection:
 - a 604px scroll region that keeps all 250 rows while matching ten visible rows
 - URL-backed sorting and accessible row links from the existing implementation
 - a closed-by-default row menu anchored beneath the active ellipsis button
-- ungrouped transaction counts matching the supplied table treatment
+- 100px condensed numeric columns and 122.22px default columns
 
 I rewrote or rejected these proposals:
 
@@ -33,4 +33,4 @@ I rewrote or rejected these proposals:
 
 ## Verification
 
-I reviewed the diff and preserved the user's existing `.gitignore` change. I ran strict type checking, component and data tests, lint and formatting checks, backend checks, and production builds. Browser checks used 1728×1117, 1024×1117, and 1280×900 viewports. They checked document overflow, element geometry, table scrolling, row-menu state, sort URLs, `aria-sort`, and console warnings.
+I reviewed the diff and preserved the user's existing `.gitignore` change. I ran strict type checking, component and data tests, lint and formatting checks, backend checks, and production builds. Browser checks used 1728×1117, 1024×1117, and 1280×900 viewports. They checked document overflow, element geometry, the row-menu state, sort URLs, `aria-sort`, and console warnings.

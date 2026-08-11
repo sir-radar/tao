@@ -15,7 +15,7 @@ export function MarketSummary() {
       <section
         aria-label="Market summary loading"
         aria-busy="true"
-        className="grid h-[140px] grid-cols-6 gap-4 py-4 max-[1100px]:gap-3 max-[900px]:grid-cols-3 max-[900px]:h-auto"
+        className="grid h-[140px] grid-cols-6 gap-4 py-4 max-[900px]:h-auto max-[900px]:grid-cols-3"
       >
         {Array.from({ length: 6 }, (_, index) => (
           <Card
@@ -79,7 +79,7 @@ export function MarketSummary() {
   return (
     <section
       aria-label="Global market summary"
-      className="grid h-[140px] grid-cols-6 gap-4 py-4 max-[1100px]:gap-3 max-[900px]:grid-cols-3 max-[900px]:h-auto"
+      className="grid h-[140px] grid-cols-6 gap-4 py-4 max-[900px]:h-auto max-[900px]:grid-cols-3"
     >
       {metrics.map((metric) => (
         <Card

@@ -67,32 +67,60 @@ function handleScrollKeys(event: KeyboardEvent<HTMLDivElement>) {
 const columns: ReadonlyArray<{
   key: SortKey;
   label: string;
-  visibleLabel?: string;
+  condensedLabel?: string;
   width: string;
 }> = [
-  { key: 'marketCap', label: 'Market cap', width: '128px' },
-  { key: 'price', label: 'Price', width: '122.222px' },
+  {
+    key: 'marketCap',
+    label: 'Market cap',
+    condensedLabel: 'Mkt. cap',
+    width: '128px',
+  },
+  { key: 'price', label: 'Price', width: 'var(--token-column-width)' },
   {
     key: 'changePercent24h',
     label: 'Price 24H',
-    width: '122.222px',
+    width: 'var(--token-column-width)',
   },
-  { key: 'changePercent7d', label: 'Price 7D', width: '122.222px' },
-  { key: 'changePercent30d', label: 'Price 1M', width: '122.222px' },
+  {
+    key: 'changePercent7d',
+    label: 'Price 7D',
+    width: 'var(--token-column-width)',
+  },
+  {
+    key: 'changePercent30d',
+    label: 'Price 1M',
+    width: 'var(--token-column-width)',
+  },
   {
     key: 'netVolume24h',
     label: '24H Net Volume',
-    visibleLabel: '24H Net Vo…',
-    width: '122.222px',
+    condensedLabel: '24H Net…',
+    width: 'var(--token-column-width)',
   },
-  { key: 'buyVolume24h', label: 'Buy Volume', width: '122.222px' },
-  { key: 'sellVolume24h', label: 'Sell Volume', width: '122.222px' },
+  {
+    key: 'buyVolume24h',
+    label: 'Buy Volume',
+    condensedLabel: 'Buy Vol…',
+    width: 'var(--token-column-width)',
+  },
+  {
+    key: 'sellVolume24h',
+    label: 'Sell Volume',
+    condensedLabel: 'Sell Vol…',
+    width: 'var(--token-column-width)',
+  },
   {
     key: 'transactions24h',
     label: 'Transactions',
-    width: '122.222px',
+    condensedLabel: 'Txns',
+    width: 'var(--token-column-width)',
   },
-  { key: 'emissionsPerDay', label: 'Emissions', width: '122.222px' },
+  {
+    key: 'emissionsPerDay',
+    label: 'Emissions',
+    width: 'var(--token-column-width)',
+  },
 ];
 
 function SortIcon({
@@ -294,7 +322,7 @@ export function TokenTable({
 
   return (
     <Table
-      className="min-w-[1600px] table-fixed text-sm"
+      className="token-market-table table-fixed text-sm"
       containerClassName="table-scrollbar-none h-[604px] rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
       containerProps={{
         role: 'region',
@@ -339,15 +367,24 @@ export function TokenTable({
               >
                 <button
                   type="button"
+                  aria-label={`Sort by ${column.label}`}
                   className={`flex h-11 w-full items-center justify-end gap-2 px-4 font-medium transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring ${
                     active ? 'text-foreground' : 'text-muted-foreground'
                   }`}
                   onClick={() => onSort(column.key)}
                 >
                   <SortIcon active={active} direction={direction} />
-                  {column.visibleLabel ?? column.label}
-                  {column.visibleLabel && (
-                    <span className="sr-only">{column.label}</span>
+                  {column.condensedLabel ? (
+                    <>
+                      <span className="max-[1100px]:hidden">
+                        {column.label}
+                      </span>
+                      <span className="hidden max-[1100px]:inline">
+                        {column.condensedLabel}
+                      </span>
+                    </>
+                  ) : (
+                    column.label
                   )}
                 </button>
               </TableHead>

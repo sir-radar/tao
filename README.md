@@ -46,7 +46,7 @@ Token Details keys detail, history, and stats queries by token and range. Range 
 
 ## Design evidence
 
-The connected Figma identity lacked editor access to file `ShGOnid4sBkwGybMICX0qh`. I used the supplied 1728px screenshot, the pasted Figma CSS export, and the supplied SVG files instead.
+The connected Figma identity lacked editor access to file `ShGOnid4sBkwGybMICX0qh`, including the condensed frame at node `5:2035`. I used the supplied 1024px screenshot, the pasted Figma CSS export, and the supplied SVG files instead.
 
 The Explore page uses the frame's measured geometry:
 
@@ -55,6 +55,8 @@ The Explore page uses the frame's measured geometry:
 - 78px market-view controls
 - 44px table header and ten 56px visible rows
 - 84px footer
+
+At 1024px, the layout uses 24px gutters, six 149.33px market cards, the icon-only 36px search control, and the complete Download and wallet controls. Numeric table columns condense from 122.22px to 100px so the initial viewport exposes Price, all three movement periods, 24H Net Volume, and Buy Volume before the sticky action rail.
 
 The header uses the supplied TAO.com logo. Market-summary badges use the supplied 12px up and down arrows. The source material did not include token-logo files, so token rows retain neutral initial avatars instead of fabricated subnet marks. The CSS export names Haffer, but the repository contains no Haffer font file; the font stack uses Haffer when installed and falls back to Inter or the system sans-serif.
 
