@@ -160,6 +160,8 @@ export function normalizeHistory(
     const point = normalizePoint(item);
     if (point) points.set(point.time, point);
   }
+  if (source.points.length > 0 && points.size === 0)
+    throw new PayloadError('Price history contained no usable points.');
   return {
     id,
     symbol: text(source.symbol),
@@ -191,7 +193,7 @@ export function normalizeStats(
   const subnetSource = object(source.subnetData);
   if (!priceSource || !financialsSource || !tradingSource || !subnetSource)
     throw new PayloadError('Stats groups were incomplete.');
-  return {
+  const result: TokenStats = {
     id,
     name: text(source.name),
     symbol: text(source.symbol),
@@ -246,4 +248,15 @@ export function normalizeStats(
       nextHalving: dateText(subnetSource.nextHalving),
     } as TokenStats['subnetData'],
   };
+  const usableLeaves = [
+    ...Object.values(result.price).filter(
+      (value): value is number | PricePoint => value !== null,
+    ),
+    ...Object.values(result.financials),
+    ...Object.values(result.trading),
+    ...Object.values(result.subnetData),
+  ];
+  if (usableLeaves.every((value) => value === null))
+    throw new PayloadError('Stats contained no usable values.');
+  return result;
 }

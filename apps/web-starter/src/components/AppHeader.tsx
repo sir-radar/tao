@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 
 export function AppHeader() {
   const pathname = usePathname();
+  const exploreActive = pathname === '/' || pathname.startsWith('/tokens/');
   return (
     <header className="border-b bg-background/95">
       <div className="page-width flex h-20 items-center gap-10 max-[1100px]:gap-7">
@@ -26,7 +27,7 @@ export function AppHeader() {
             href="/"
             className={cn(
               'relative py-7 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring',
-              pathname === '/' &&
+              exploreActive &&
                 'text-foreground after:absolute after:right-[-12px] after:top-1/2 after:size-1.5 after:rounded-full after:bg-primary',
             )}
           >
