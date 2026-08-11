@@ -67,13 +67,11 @@ function handleScrollKeys(event: KeyboardEvent<HTMLDivElement>) {
 const columns: ReadonlyArray<{
   key: SortKey;
   label: string;
-  condensedLabel?: string;
   width: string;
 }> = [
   {
     key: 'marketCap',
     label: 'Market cap',
-    condensedLabel: 'Mkt. cap',
     width: '128px',
   },
   { key: 'price', label: 'Price', width: 'var(--token-column-width)' },
@@ -95,25 +93,21 @@ const columns: ReadonlyArray<{
   {
     key: 'netVolume24h',
     label: '24H Net Volume',
-    condensedLabel: '24H Net…',
     width: 'var(--token-column-width)',
   },
   {
     key: 'buyVolume24h',
     label: 'Buy Volume',
-    condensedLabel: 'Buy Vol…',
     width: 'var(--token-column-width)',
   },
   {
     key: 'sellVolume24h',
     label: 'Sell Volume',
-    condensedLabel: 'Sell Vol…',
     width: 'var(--token-column-width)',
   },
   {
     key: 'transactions24h',
     label: 'Transactions',
-    condensedLabel: 'Txns',
     width: 'var(--token-column-width)',
   },
   {
@@ -132,9 +126,9 @@ function SortIcon({
 }) {
   if (!active) return null;
   return direction === 'asc' ? (
-    <ArrowUp className="size-4" aria-hidden="true" />
+    <ArrowUp className="size-4 shrink-0" aria-hidden="true" />
   ) : (
-    <ArrowDown className="size-4" aria-hidden="true" />
+    <ArrowDown className="size-4 shrink-0" aria-hidden="true" />
   );
 }
 
@@ -368,24 +362,15 @@ export function TokenTable({
                 <button
                   type="button"
                   aria-label={`Sort by ${column.label}`}
-                  className={`flex h-11 w-full items-center justify-end gap-2 px-4 font-medium transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring ${
+                  className={`flex h-11 w-full items-center justify-end gap-1 px-4 font-medium transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring ${
                     active ? 'text-foreground' : 'text-muted-foreground'
                   }`}
                   onClick={() => onSort(column.key)}
                 >
                   <SortIcon active={active} direction={direction} />
-                  {column.condensedLabel ? (
-                    <>
-                      <span className="max-[1100px]:hidden">
-                        {column.label}
-                      </span>
-                      <span className="hidden max-[1100px]:inline">
-                        {column.condensedLabel}
-                      </span>
-                    </>
-                  ) : (
-                    column.label
-                  )}
+                  <span className="min-w-0 truncate" title={column.label}>
+                    {column.label}
+                  </span>
                 </button>
               </TableHead>
             );

@@ -39,6 +39,11 @@ describe('TokenTable', () => {
     expect(
       screen.getByRole('columnheader', { name: /price 24h/i }),
     ).toHaveAttribute('aria-sort', 'none');
+    expect(
+      within(
+        screen.getByRole('columnheader', { name: /24h net volume/i }),
+      ).getByTitle('24H Net Volume'),
+    ).toHaveClass('min-w-0', 'truncate');
 
     fireEvent.click(within(marketCapHeader).getByRole('button'));
     expect(onSort).toHaveBeenCalledWith('marketCap');
