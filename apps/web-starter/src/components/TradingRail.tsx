@@ -92,25 +92,33 @@ export function TradingRail({
         aria-labelledby="swap-preview-title"
         className="h-[560px] space-y-4"
       >
-        <div className="flex h-[108px] items-center gap-3 rounded-2xl bg-[#3d3120] px-4 py-3">
-          <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-[#3e73c4] text-white">
-            <CircleDollarSign className="size-4" aria-hidden="true" />
+        <div className="grid h-[108px] grid-cols-[24px_minmax(0,1fr)_20px] gap-3 rounded-[16px] bg-[#3d3120] px-4 py-3">
+          <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-[#3e73c4] text-white">
+            <CircleDollarSign className="size-5" aria-hidden="true" />
           </span>
-          <div className="min-w-0 flex-1 self-start">
-            <div className="flex h-5 items-center justify-between gap-3">
-              <h2 id="swap-preview-title" className="text-sm font-medium">
-                Swap with tUSDT
-              </h2>
-              <span className="rounded-full bg-card px-2 py-1 text-[10px] font-medium">
-                Preview only
-              </span>
-            </div>
-            <p className="mt-1 max-w-[242px] text-xs leading-5 text-foreground/90">
-              TAO.com supports swaps with Bittensor and popular ERC20 tokens.
+          <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_88px] grid-rows-[20px_60px] gap-x-2 min-[1850px]:grid-cols-[206px_95px] min-[1850px]:gap-x-3">
+            <h2
+              id="swap-preview-title"
+              className="col-start-1 row-start-1 text-sm font-medium leading-5"
+            >
+              Swap with USDC!
+            </h2>
+            <p className="col-span-2 col-start-1 row-start-2 max-w-[206px] text-sm leading-5 text-foreground min-[1850px]:col-span-1">
+              <span className="block">TAO.com supports swaps with</span>
+              <span className="block">Bittensor &amp; popular ERC20</span>
+              <span className="block">tokens!</span>
             </p>
+            <button
+              type="button"
+              disabled
+              className="col-start-2 row-start-1 flex h-6 w-[88px] items-center justify-center self-start rounded-full bg-[#12111a] text-[11px] font-medium text-foreground disabled:pointer-events-none disabled:opacity-100 min-[1850px]:row-span-2 min-[1850px]:w-[95px] min-[1850px]:self-center min-[1850px]:text-xs"
+            >
+              Connect ETH
+            </button>
+            <span className="sr-only">Preview only</span>
           </div>
           <X
-            className="size-4 shrink-0 text-muted-foreground"
+            className="size-5 shrink-0 self-center text-muted-foreground"
             aria-hidden="true"
           />
         </div>
