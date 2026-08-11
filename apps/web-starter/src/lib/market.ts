@@ -15,11 +15,33 @@ export const SORT_KEYS = [
 export type SortKey = (typeof SORT_KEYS)[number];
 export type SortDirection = 'asc' | 'desc';
 
+export const DEFAULT_SORT_KEY: SortKey = 'marketCap';
+export const DEFAULT_SORT_DIRECTION: SortDirection = 'desc';
+
 export function isSortKey(value: string | null): value is SortKey {
   return value !== null && (SORT_KEYS as readonly string[]).includes(value);
 }
 export function isSortDirection(value: string | null): value is SortDirection {
   return value === 'asc' || value === 'desc';
+}
+
+export function resolveSortState(
+  sort: string | null,
+  direction: string | null,
+) {
+  return {
+    sortKey: isSortKey(sort) ? sort : DEFAULT_SORT_KEY,
+    direction: isSortDirection(direction) ? direction : DEFAULT_SORT_DIRECTION,
+  };
+}
+
+export function nextSortDirection(
+  currentKey: SortKey,
+  currentDirection: SortDirection,
+  nextKey: SortKey,
+): SortDirection {
+  if (nextKey !== currentKey) return 'desc';
+  return currentDirection === 'desc' ? 'asc' : 'desc';
 }
 
 export function sortTokens(

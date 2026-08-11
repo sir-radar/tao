@@ -5,12 +5,29 @@ const compact = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 2,
 });
 const integer = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
+const compactCurrency = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  notation: 'compact',
+  maximumFractionDigits: 2,
+});
 
 export function formatCompact(value: NullableNumber, prefix = '') {
   return value === null ? '—' : `${prefix}${compact.format(value)}`;
 }
 export function formatInteger(value: NullableNumber) {
   return value === null ? '—' : integer.format(value);
+}
+export function formatCurrencyCompact(value: NullableNumber) {
+  return value === null ? '—' : compactCurrency.format(value);
+}
+export function formatDecimal(
+  value: NullableNumber,
+  maximumFractionDigits = 2,
+) {
+  return value === null
+    ? '—'
+    : new Intl.NumberFormat('en-US', { maximumFractionDigits }).format(value);
 }
 export function formatPrice(value: NullableNumber) {
   if (value === null) return '—';
