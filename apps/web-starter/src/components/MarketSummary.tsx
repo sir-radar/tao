@@ -2,7 +2,7 @@
 
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { formatCompact, formatPercent } from '@/lib/format';
+import { formatCompact, formatInteger, formatPercent } from '@/lib/format';
 import { useMarketSummary } from '@/lib/queries';
 import { Movement } from './Movement';
 import { ResourceError } from './ResourceState';
@@ -15,12 +15,12 @@ export function MarketSummary() {
       <section
         aria-label="Market summary loading"
         aria-busy="true"
-        className="grid grid-cols-6 gap-4 max-[1100px]:gap-3 max-[900px]:grid-cols-3"
+        className="grid h-[140px] grid-cols-6 gap-4 py-4 max-[1100px]:gap-3 max-[900px]:grid-cols-3 max-[900px]:h-auto"
       >
         {Array.from({ length: 6 }, (_, index) => (
           <Card
             key={index}
-            className="h-[109px] gap-2 border-0 p-4 shadow-none"
+            className="h-[108px] gap-2 rounded-2xl border-0 p-4 shadow-none ring-0"
           >
             <Skeleton className="h-4 w-24" />
             <Skeleton className="h-7 w-28" />
@@ -45,28 +45,28 @@ export function MarketSummary() {
   const metrics = [
     {
       label: 'Market cap',
-      value: formatCompact(data.marketCap, '$'),
+      value: formatCompact(data.marketCap, 'τ'),
       change: data.marketCapChangePercent24h,
     },
     {
       label: 'Volume (24h)',
-      value: formatCompact(data.volume24h, '$'),
+      value: formatCompact(data.volume24h, 'τ'),
       change: data.volumeChangePercent24h,
     },
     {
       label: 'Vol/Mkt Cap (24h)',
       value: formatPercent(data.volumeToMarketCapPercent, false),
-      change: null,
+      change: data.volumeToMarketCapPercent,
       ratio: true,
     },
     {
       label: 'Daily Trades',
-      value: formatCompact(data.dailyTrades),
+      value: formatInteger(data.dailyTrades),
       change: data.dailyTradesChangePercent24h,
     },
     {
       label: 'Daily Traders',
-      value: formatCompact(data.dailyTraders),
+      value: formatInteger(data.dailyTraders),
       change: data.dailyTradersChangePercent24h,
     },
     {
@@ -79,24 +79,25 @@ export function MarketSummary() {
   return (
     <section
       aria-label="Global market summary"
-      className="grid grid-cols-6 gap-4 max-[1100px]:gap-3 max-[900px]:grid-cols-3"
+      className="grid h-[140px] grid-cols-6 gap-4 py-4 max-[1100px]:gap-3 max-[900px]:grid-cols-3 max-[900px]:h-auto"
     >
       {metrics.map((metric) => (
         <Card
           key={metric.label}
-          className="h-[109px] gap-1 border-0 p-4 shadow-none"
+          className="h-[108px] gap-1 rounded-2xl border-0 p-4 shadow-none ring-0"
         >
-          <p className="text-sm text-muted-foreground">{metric.label}</p>
-          <p className="text-[23px] leading-tight tracking-tight tabular">
+          <p className="h-5 text-sm leading-5 text-muted-foreground">
+            {metric.label}
+          </p>
+          <p className="h-8 text-2xl leading-8 tracking-tight tabular">
             {metric.value}
           </p>
-          {'ratio' in metric && metric.ratio ? (
-            <span className="mt-0.5 w-fit rounded-md bg-positive/10 px-1.5 py-0.5 text-xs text-positive">
-              24H ratio
-            </span>
-          ) : (
-            <Movement value={metric.change} compact />
-          )}
+          <span className="flex h-5 items-center">
+            <Movement value={metric.change} compact variant="summary" />
+            {'ratio' in metric && metric.ratio && (
+              <span className="sr-only">24H ratio</span>
+            )}
+          </span>
         </Card>
       ))}
     </section>

@@ -1,10 +1,15 @@
 export function AppFooter() {
   return (
-    <footer className="page-width mt-auto flex min-h-24 items-end justify-between gap-5 pb-8 pt-12 text-xs text-muted-foreground max-[900px]:flex-col max-[900px]:items-start">
+    <footer className="page-width mt-auto flex h-[84px] shrink-0 items-start justify-between gap-8 py-8 text-sm leading-5 text-muted-foreground">
       <span>© 2026 TAO.com — All rights reserved.</span>
-      <span className="text-right max-[900px]:text-left">
-        API Documentation&nbsp;&nbsp; • &nbsp;&nbsp;Privacy Policy&nbsp;&nbsp; •
-        &nbsp;&nbsp;Terms of Use&nbsp;&nbsp; • &nbsp;&nbsp;Support
+      <span className="flex items-center gap-3 text-right">
+        <span>API Documentation</span>
+        <span className="size-1 rounded-full bg-white/20" aria-hidden="true" />
+        <span>Privacy Policy</span>
+        <span className="size-1 rounded-full bg-white/20" aria-hidden="true" />
+        <span>Terms of Use</span>
+        <span className="size-1 rounded-full bg-white/20" aria-hidden="true" />
+        <span>Support</span>
       </span>
     </footer>
   );

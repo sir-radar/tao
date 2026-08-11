@@ -9,7 +9,6 @@ import {
   Trophy,
   type LucideIcon,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { MarketSummary } from './MarketSummary';
 import { TokenMarkets } from './TokenMarkets';
 import { TokenTableSkeleton } from './TokenTable';
@@ -29,25 +28,23 @@ const marketViews: ReadonlyArray<{
 
 export function ExplorePage() {
   return (
-    <main id="main" className="page-width flex-1 py-4">
+    <main id="main" className="page-width flex-1">
       <h1 className="sr-only">Explore Tokens</h1>
       <MarketSummary />
 
-      <div className="mt-8 flex items-end justify-between gap-6 border-b max-[900px]:flex-col max-[900px]:items-stretch max-[900px]:gap-0">
+      <div className="flex h-[78px] items-center justify-between gap-2 py-4">
         <nav
           aria-label="Market views"
           className="thin-scrollbar min-w-0 overflow-x-auto"
           tabIndex={0}
         >
-          <ul className="flex h-14 items-stretch gap-8 text-sm font-medium text-muted-foreground max-[1100px]:gap-6">
+          <ul className="flex h-[46px] items-stretch gap-4 text-lg font-medium text-muted-foreground">
             {marketViews.map(({ label, icon: Icon, current }) => (
               <li
                 key={label}
-                className={
-                  current
-                    ? 'flex shrink-0 items-center gap-2 border-b-2 border-primary text-foreground'
-                    : 'flex shrink-0 items-center gap-2'
-                }
+                className={`flex h-[46px] shrink-0 items-center justify-center gap-2 px-2 py-2.5 ${
+                  current ? 'border-b-[3px] border-primary text-foreground' : ''
+                }`}
                 aria-current={current ? 'page' : undefined}
               >
                 <Icon className="size-4" aria-hidden="true" />
@@ -57,28 +54,30 @@ export function ExplorePage() {
           </ul>
         </nav>
 
-        <div className="flex shrink-0 items-center justify-end gap-3 pb-2 max-[900px]:pt-2">
-          <Button
-            variant="secondary"
-            size="icon"
+        <div className="flex h-11 shrink-0 items-center justify-end gap-4">
+          <button
+            type="button"
             disabled
+            className="flex size-11 items-center justify-center rounded-[14px] bg-secondary text-foreground disabled:opacity-100"
             aria-label="Market filters preview"
           >
-            <SlidersHorizontal />
-          </Button>
+            <SlidersHorizontal className="size-4" aria-hidden="true" />
+          </button>
           <div
-            className="flex rounded-xl bg-secondary p-1 text-xs"
+            className="flex h-11 w-[127px] rounded-2xl bg-secondary p-1 text-sm font-medium"
             aria-label="Currency display: USD"
           >
-            <span className="rounded-lg bg-background px-4 py-2 text-foreground">
+            <span className="flex h-9 w-[60px] items-center justify-center rounded-[14px] bg-card text-foreground shadow-sm">
               USD
             </span>
-            <span className="px-4 py-2 text-muted-foreground">TAO</span>
+            <span className="flex h-9 w-[59px] items-center justify-center text-muted-foreground">
+              TAO
+            </span>
           </div>
         </div>
       </div>
 
-      <section className="mt-4" aria-labelledby="token-markets-heading">
+      <section aria-labelledby="token-markets-heading">
         <h2 id="token-markets-heading" className="sr-only">
           Token markets
         </h2>
