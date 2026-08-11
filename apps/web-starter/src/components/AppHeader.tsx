@@ -11,7 +11,7 @@ export function AppHeader() {
   const exploreActive = pathname === '/' || pathname.startsWith('/tokens/');
   return (
     <header className="border-b bg-background/95">
-      <div className="page-width flex h-20 items-center gap-10 max-[1100px]:gap-7">
+      <div className="page-width flex h-20 items-center gap-10 max-[1100px]:gap-7 max-[900px]:gap-5">
         <Link
           href="/"
           className="shrink-0 text-[29px] font-bold tracking-[-0.07em] focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
@@ -33,10 +33,16 @@ export function AppHeader() {
           >
             Explore
           </Link>
-          <span className="text-muted-foreground" aria-disabled="true">
+          <span
+            className="text-muted-foreground max-[900px]:hidden"
+            aria-disabled="true"
+          >
             Swap
           </span>
-          <span className="text-muted-foreground" aria-disabled="true">
+          <span
+            className="text-muted-foreground max-[900px]:hidden"
+            aria-disabled="true"
+          >
             Portfolio
           </span>
         </nav>

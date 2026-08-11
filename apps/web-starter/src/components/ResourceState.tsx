@@ -48,7 +48,13 @@ export function EmptyState({
         {description}
       </p>
       {retry && (
-        <Button size="sm" variant="outline" className="mt-4" onClick={retry}>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          className="mt-4"
+          onClick={retry}
+        >
           <RefreshCcw className="size-3.5" />
           Retry
         </Button>

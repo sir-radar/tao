@@ -33,8 +33,12 @@ export function ExplorePage() {
       <h1 className="sr-only">Explore Tokens</h1>
       <MarketSummary />
 
-      <div className="mt-8 flex items-end justify-between gap-6 border-b">
-        <nav aria-label="Market views" className="min-w-0 overflow-hidden">
+      <div className="mt-8 flex items-end justify-between gap-6 border-b max-[900px]:flex-col max-[900px]:items-stretch max-[900px]:gap-0">
+        <nav
+          aria-label="Market views"
+          className="thin-scrollbar min-w-0 overflow-x-auto"
+          tabIndex={0}
+        >
           <ul className="flex h-14 items-stretch gap-8 text-sm font-medium text-muted-foreground max-[1100px]:gap-6">
             {marketViews.map(({ label, icon: Icon, current }) => (
               <li
@@ -53,7 +57,7 @@ export function ExplorePage() {
           </ul>
         </nav>
 
-        <div className="flex shrink-0 items-center gap-3 pb-2">
+        <div className="flex shrink-0 items-center justify-end gap-3 pb-2 max-[900px]:pt-2">
           <Button
             variant="secondary"
             size="icon"

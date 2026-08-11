@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import type { TokenListItem } from './api/contracts';
-import { nextSortDirection, resolveSortState, sortTokens } from './market';
+import {
+  nextSortDirection,
+  percentageShare,
+  resolveSortState,
+  sortTokens,
+} from './market';
 
 function token(
   id: string,
@@ -69,5 +74,15 @@ describe('sort URL state', () => {
     expect(nextSortDirection('marketCap', 'asc', 'changePercent24h')).toBe(
       'desc',
     );
+  });
+});
+
+describe('percentageShare', () => {
+  it('returns a bounded share without inventing missing data', () => {
+    expect(percentageShare(25, 100)).toBe(25);
+    expect(percentageShare(120, 100)).toBe(100);
+    expect(percentageShare(null, 100)).toBeNull();
+    expect(percentageShare(0, null)).toBeNull();
+    expect(percentageShare(0, 0)).toBeNull();
   });
 });

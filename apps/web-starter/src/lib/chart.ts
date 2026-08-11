@@ -28,3 +28,12 @@ export function chartPriceScale(price: number) {
             : 8;
   return { precision, minMove: 10 ** -precision };
 }
+
+export function chartPriceDomain(low: number, high: number) {
+  const span = high - low;
+  const padding =
+    span === 0
+      ? Math.max(Math.abs(low) * 0.01, chartPriceScale(low).minMove)
+      : span * 0.08;
+  return { minValue: low - padding, maxValue: high + padding };
+}

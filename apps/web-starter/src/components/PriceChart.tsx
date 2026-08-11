@@ -14,7 +14,7 @@ import {
   type UTCTimestamp,
 } from 'lightweight-charts';
 import type { HistoryRange, PricePoint } from '@/lib/api/contracts';
-import { chartPriceScale, describeSeries } from '@/lib/chart';
+import { chartPriceDomain, chartPriceScale, describeSeries } from '@/lib/chart';
 import { formatPrice } from '@/lib/format';
 
 function formatTick(time: Time, range: HistoryRange) {
@@ -133,6 +133,9 @@ export function PriceChart({
       pointMarkersVisible: points.length === 1,
       pointMarkersRadius: 4,
       priceFormat: { type: 'price', ...chartPriceScale(summary.close) },
+      autoscaleInfoProvider: () => ({
+        priceRange: chartPriceDomain(summary.low, summary.high),
+      }),
     });
     const data: BaselineData[] = points.map((point) => ({
       time: point.time as UTCTimestamp,

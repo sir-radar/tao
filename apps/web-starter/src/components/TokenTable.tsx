@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useMemo } from 'react';
+import { memo, useMemo, type KeyboardEvent } from 'react';
 import Link from 'next/link';
 import { ArrowDown, ArrowUp, ArrowUpDown, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -31,6 +31,26 @@ type TokenTableProps = {
   direction: SortDirection;
   onSort: (key: SortKey) => void;
 };
+
+function handleScrollKeys(event: KeyboardEvent<HTMLDivElement>) {
+  if (event.target !== event.currentTarget) return;
+  const region = event.currentTarget;
+  if (region.scrollWidth <= region.clientWidth) return;
+  const step = Math.max(160, Math.floor(region.clientWidth * 0.7));
+  let next: number | null = null;
+  if (event.key === 'ArrowRight' || event.key === 'PageDown')
+    next = region.scrollLeft + step;
+  if (event.key === 'ArrowLeft' || event.key === 'PageUp')
+    next = region.scrollLeft - step;
+  if (event.key === 'Home') next = 0;
+  if (event.key === 'End') next = region.scrollWidth;
+  if (next === null) return;
+  event.preventDefault();
+  region.scrollLeft = Math.max(
+    0,
+    Math.min(next, region.scrollWidth - region.clientWidth),
+  );
+}
 
 const columns: ReadonlyArray<{
   key: SortKey;
@@ -172,11 +192,16 @@ export function TokenTable({
       containerProps={{
         role: 'region',
         'aria-label': 'Token markets table',
+        'aria-describedby': 'token-markets-scroll-help',
+        'aria-keyshortcuts': 'ArrowLeft ArrowRight PageUp PageDown Home End',
         tabIndex: 0,
+        onKeyDown: handleScrollKeys,
       }}
     >
-      <TableCaption className="sr-only">
+      <TableCaption id="token-markets-scroll-help" className="sr-only">
         TAO subnet markets. Activate a column heading to change the sort order.
+        When this table region is focused, use the left and right arrow keys,
+        Page Up, Page Down, Home, or End to scroll horizontally.
       </TableCaption>
       <colgroup>
         <col style={{ width: '190px' }} />

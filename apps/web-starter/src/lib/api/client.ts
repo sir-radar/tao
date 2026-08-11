@@ -38,6 +38,14 @@ async function get(path: string, signal?: AbortSignal): Promise<unknown> {
   try {
     payload = await response.json();
   } catch {
+    if (!response.ok) {
+      throw new ApiError(
+        response.status,
+        response.status >= 500
+          ? 'The API could not be reached.'
+          : `Request failed (${response.status}).`,
+      );
+    }
     throw new ApiError(
       response.status,
       'The API returned an unreadable response.',

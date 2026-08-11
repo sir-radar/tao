@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { chartPriceScale, describeSeries } from './chart';
+import { chartPriceDomain, chartPriceScale, describeSeries } from './chart';
 
 describe('describeSeries', () => {
   it('summarizes chart points for the accessible fallback', () => {
@@ -38,6 +38,17 @@ describe('chartPriceScale', () => {
     expect(chartPriceScale(0.00001234)).toEqual({
       precision: 8,
       minMove: 0.00000001,
+    });
+  });
+});
+
+describe('chartPriceDomain', () => {
+  it('pads normal and flat series without collapsing the y-axis', () => {
+    expect(chartPriceDomain(10, 20)).toEqual({ minValue: 9.2, maxValue: 20.8 });
+    expect(chartPriceDomain(5, 5)).toEqual({ minValue: 4.95, maxValue: 5.05 });
+    expect(chartPriceDomain(0.00000001, 0.00000001)).toEqual({
+      minValue: 0,
+      maxValue: 0.00000002,
     });
   });
 });

@@ -62,3 +62,11 @@ export function sortTokens(
       : comparison * factor;
   });
 }
+
+export function percentageShare(
+  value: number | null,
+  total: number | null,
+): number | null {
+  if (value === null || total === null || total <= 0) return null;
+  return Math.min(100, Math.max(0, (value / total) * 100));
+}

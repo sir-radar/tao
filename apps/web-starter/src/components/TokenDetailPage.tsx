@@ -25,7 +25,7 @@ export function TokenDetailSkeleton() {
       className="page-width flex-1 py-5"
       aria-label="Loading token details"
     >
-      <div className="grid grid-cols-[minmax(0,1fr)_clamp(320px,24vw,400px)] gap-6 max-[1100px]:gap-4">
+      <div className="grid grid-cols-[minmax(0,1fr)_clamp(320px,24vw,400px)] gap-6 max-[1100px]:gap-4 max-[900px]:grid-cols-1">
         <div className="space-y-5">
           <div className="space-y-4 border-b pb-5">
             <Skeleton className="h-3 w-32" />
@@ -36,7 +36,7 @@ export function TokenDetailSkeleton() {
             <Skeleton className="h-9 w-36" />
           </div>
           <Skeleton className="h-[420px] w-full" />
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4 max-[900px]:grid-cols-1">
             <Skeleton className="h-48" />
             <Skeleton className="h-48" />
           </div>
@@ -151,7 +151,7 @@ export function TokenDetailPage({ id }: { id: string }) {
   const displayedStats = statsQuery.data ?? cachedStats ?? null;
   return (
     <main id="main" className="page-width flex-1 py-5">
-      <div className="grid grid-cols-[minmax(0,1fr)_clamp(320px,24vw,400px)] items-start gap-6 max-[1100px]:gap-4">
+      <div className="grid grid-cols-[minmax(0,1fr)_clamp(320px,24vw,400px)] items-start gap-6 max-[1100px]:gap-4 max-[900px]:grid-cols-1">
         <div className="min-w-0 space-y-5">
           <PriceHeader token={token} />
           <ChartPanel

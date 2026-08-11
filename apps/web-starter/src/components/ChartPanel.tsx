@@ -30,7 +30,11 @@ export function ChartPanel({
     displayed && displayed.range !== selectedRange,
   );
   return (
-    <section aria-labelledby="price-history-title" className="min-w-0">
+    <section
+      aria-labelledby="price-history-title"
+      aria-busy={isInitialLoading || isUpdating}
+      className="min-w-0"
+    >
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 id="price-history-title" className="text-sm font-medium">

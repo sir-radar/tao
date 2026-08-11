@@ -14,7 +14,8 @@ export function MarketSummary() {
     return (
       <section
         aria-label="Market summary loading"
-        className="grid grid-cols-6 gap-4 max-[1100px]:gap-3"
+        aria-busy="true"
+        className="grid grid-cols-6 gap-4 max-[1100px]:gap-3 max-[900px]:grid-cols-3"
       >
         {Array.from({ length: 6 }, (_, index) => (
           <Card
@@ -56,6 +57,7 @@ export function MarketSummary() {
       label: 'Vol/Mkt Cap (24h)',
       value: formatPercent(data.volumeToMarketCapPercent, false),
       change: null,
+      ratio: true,
     },
     {
       label: 'Daily Trades',
@@ -77,7 +79,7 @@ export function MarketSummary() {
   return (
     <section
       aria-label="Global market summary"
-      className="grid grid-cols-6 gap-4 max-[1100px]:gap-3"
+      className="grid grid-cols-6 gap-4 max-[1100px]:gap-3 max-[900px]:grid-cols-3"
     >
       {metrics.map((metric) => (
         <Card
@@ -88,7 +90,7 @@ export function MarketSummary() {
           <p className="text-[23px] leading-tight tracking-tight tabular">
             {metric.value}
           </p>
-          {metric.change === null ? (
+          {'ratio' in metric && metric.ratio ? (
             <span className="mt-0.5 w-fit rounded-md bg-positive/10 px-1.5 py-0.5 text-xs text-positive">
               24H ratio
             </span>

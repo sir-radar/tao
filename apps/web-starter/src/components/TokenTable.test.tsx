@@ -50,6 +50,19 @@ describe('TokenTable', () => {
     expect(
       screen.getByRole('region', { name: /token markets table/i }),
     ).toHaveAttribute('tabindex', '0');
+    const scrollRegion = screen.getByRole('region', {
+      name: /token markets table/i,
+    });
+    Object.defineProperties(scrollRegion, {
+      clientWidth: { configurable: true, value: 500 },
+      scrollWidth: { configurable: true, value: 1500 },
+    });
+    fireEvent.keyDown(scrollRegion, { key: 'ArrowRight' });
+    expect(scrollRegion.scrollLeft).toBe(350);
+    fireEvent.keyDown(scrollRegion, { key: 'End' });
+    expect(scrollRegion.scrollLeft).toBe(1000);
+    fireEvent.keyDown(scrollRegion, { key: 'Home' });
+    expect(scrollRegion.scrollLeft).toBe(0);
     expect(screen.getByText('1.25%')).toBeInTheDocument();
     expect(screen.queryByText('-1.25%')).not.toBeInTheDocument();
     const downArrow = container.querySelector('svg[data-trend-arrow="down"]');

@@ -14,6 +14,7 @@ import {
   formatPrice,
   formatRatio,
 } from '@/lib/format';
+import { percentageShare } from '@/lib/market';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -62,12 +63,6 @@ function supply(value: NullableNumber, symbol: string) {
   return value === null ? '—' : `${formatCompact(value)} ${symbol}`;
 }
 
-function percentShare(value: NullableNumber, total: NullableNumber) {
-  return value === null || total === null || total <= 0
-    ? 0
-    : (value / total) * 100;
-}
-
 function TradingBars({ stats }: { stats: TokenStats }) {
   const groups = [
     {
@@ -108,7 +103,8 @@ function TradingBars({ stats }: { stats: TokenStats }) {
   return (
     <div className="space-y-4">
       {groups.map((group) => {
-        const buyShare = percentShare(group.buy, group.total);
+        const buyShare = percentageShare(group.buy, group.total);
+        const sellShare = buyShare === null ? null : 100 - buyShare;
         return (
           <div key={group.label}>
             <div className="mb-1.5 flex justify-between gap-4 text-[10px]">
@@ -118,15 +114,28 @@ function TradingBars({ stats }: { stats: TokenStats }) {
               </span>
               <span className="text-right text-negative">
                 {group.sellLabel}: {formatCompact(group.sell)} (
-                {formatPercent(100 - buyShare, false)})
+                {formatPercent(sellShare, false)})
               </span>
             </div>
             <div
-              className="flex h-1.5 overflow-hidden rounded-full bg-negative"
+              className={
+                buyShare === null
+                  ? 'flex h-1.5 overflow-hidden rounded-full bg-muted'
+                  : 'flex h-1.5 overflow-hidden rounded-full bg-negative'
+              }
               role="img"
-              aria-label={`${group.label}: ${formatPercent(buyShare, false)} buy and ${formatPercent(100 - buyShare, false)} sell`}
+              aria-label={
+                buyShare === null
+                  ? `${group.label}: share unavailable`
+                  : `${group.label}: ${formatPercent(buyShare, false)} buy and ${formatPercent(sellShare, false)} sell`
+              }
             >
-              <span className="bg-positive" style={{ width: `${buyShare}%` }} />
+              {buyShare !== null && (
+                <span
+                  className="bg-positive"
+                  style={{ width: `${buyShare}%` }}
+                />
+              )}
             </div>
           </div>
         );
@@ -169,7 +178,11 @@ export function StatsSections({
 }) {
   const symbol = token.symbol ?? token.id.toUpperCase();
   return (
-    <section className="border-t pt-4" aria-labelledby="token-stats-heading">
+    <section
+      className="border-t pt-4"
+      aria-labelledby="token-stats-heading"
+      aria-busy={isInitialLoading || isUpdating}
+    >
       <Tabs defaultValue="stats">
         <div className="flex items-center justify-between gap-3">
           <TabsList variant="line" aria-label="Token detail sections">
