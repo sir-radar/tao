@@ -1,8 +1,22 @@
-export const HISTORY_RANGES = ["1h", "24h", "7d", "30d", "90d", "1y", "all"] as const;
+export const HISTORY_RANGES = [
+  '1h',
+  '24h',
+  '7d',
+  '30d',
+  '90d',
+  '1y',
+  'all',
+] as const;
 export type HistoryRange = (typeof HISTORY_RANGES)[number];
 
 export const RANGE_LABELS: Record<HistoryRange, string> = {
-  "1h": "1H", "24h": "24H", "7d": "7D", "30d": "30D", "90d": "90D", "1y": "1Y", all: "All",
+  '1h': '1H',
+  '24h': '24H',
+  '7d': '7D',
+  '30d': '30D',
+  '90d': '90D',
+  '1y': '1Y',
+  all: 'All',
 };
 
 export type NullableNumber = number | null;
@@ -67,35 +81,68 @@ export type HistorySeries = {
 };
 
 export type StatsPrice = {
-  open: NullableNumber; close: NullableNumber; high: NullableNumber; low: NullableNumber;
-  change: NullableNumber; changePercent: NullableNumber;
-  allTimeHigh: PricePoint | null; allTimeLow: PricePoint | null;
+  open: NullableNumber;
+  close: NullableNumber;
+  high: NullableNumber;
+  low: NullableNumber;
+  change: NullableNumber;
+  changePercent: NullableNumber;
+  allTimeHigh: PricePoint | null;
+  allTimeLow: PricePoint | null;
 };
 
 export type StatsFinancials = {
-  marketCap: NullableNumber; fullyDilutedValue: NullableNumber; mcFdvRatio: NullableNumber;
-  circulatingSupply: NullableNumber; totalSupply: NullableNumber; maxSupply: NullableNumber;
-  totalStaked: NullableNumber; averageStakeApy: NullableNumber;
+  marketCap: NullableNumber;
+  fullyDilutedValue: NullableNumber;
+  mcFdvRatio: NullableNumber;
+  circulatingSupply: NullableNumber;
+  totalSupply: NullableNumber;
+  maxSupply: NullableNumber;
+  totalStaked: NullableNumber;
+  averageStakeApy: NullableNumber;
 };
 
 export type StatsTrading = {
-  totalVolume: NullableNumber; netVolume: NullableNumber; buyVolume: NullableNumber; sellVolume: NullableNumber;
-  transactions: NullableNumber; traders: NullableNumber; totalBuys: NullableNumber; totalSells: NullableNumber;
-  uniqueBuyers: NullableNumber; uniqueSellers: NullableNumber;
+  totalVolume: NullableNumber;
+  netVolume: NullableNumber;
+  buyVolume: NullableNumber;
+  sellVolume: NullableNumber;
+  transactions: NullableNumber;
+  traders: NullableNumber;
+  totalBuys: NullableNumber;
+  totalSells: NullableNumber;
+  uniqueBuyers: NullableNumber;
+  uniqueSellers: NullableNumber;
 };
 
 export type StatsSubnet = {
-  emissionsPerDay: NullableNumber; incentiveBurn: NullableNumber; registrationCost: NullableNumber;
-  activeValidators: NullableNumber; activeMiners: NullableNumber; registeredKeys: NullableNumber;
-  keyCapacity: NullableNumber; registeredAt: string | null; nextHalving: string | null;
+  emissionsPerDay: NullableNumber;
+  incentiveBurn: NullableNumber;
+  registrationCost: NullableNumber;
+  activeValidators: NullableNumber;
+  activeMiners: NullableNumber;
+  registeredKeys: NullableNumber;
+  keyCapacity: NullableNumber;
+  registeredAt: string | null;
+  nextHalving: string | null;
 };
 
 export type TokenStats = {
-  id: string; name: string | null; symbol: string | null; subnet: string | null;
-  range: HistoryRange; generatedAt: string | null;
-  price: StatsPrice; financials: StatsFinancials; trading: StatsTrading; subnetData: StatsSubnet;
+  id: string;
+  name: string | null;
+  symbol: string | null;
+  subnet: string | null;
+  range: HistoryRange;
+  generatedAt: string | null;
+  price: StatsPrice;
+  financials: StatsFinancials;
+  trading: StatsTrading;
+  subnetData: StatsSubnet;
 };
 
 export class PayloadError extends Error {
-  constructor(message: string) { super(message); this.name = "PayloadError"; }
+  constructor(message: string) {
+    super(message);
+    this.name = 'PayloadError';
+  }
 }

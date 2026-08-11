@@ -13,6 +13,9 @@
     "web:build": "pnpm --filter @tao-takehome/web-starter build",
     "web:start": "pnpm --filter @tao-takehome/web-starter start",
     "web:lint": "pnpm --filter @tao-takehome/web-starter lint",
+    "web:lint:fix": "pnpm --filter @tao-takehome/web-starter lint:fix",
+    "web:format": "pnpm --filter @tao-takehome/web-starter format",
+    "web:format:check": "pnpm --filter @tao-takehome/web-starter format:check",
     "web:typecheck": "pnpm --filter @tao-takehome/web-starter typecheck",
     "web:test": "pnpm --filter @tao-takehome/web-starter test"
   },
