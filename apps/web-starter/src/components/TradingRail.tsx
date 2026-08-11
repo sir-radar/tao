@@ -150,12 +150,13 @@ export function TradingRail({
           </p>
           <div className="relative flex h-80 flex-col gap-2">
             <SwapTile side="Sell" token={token} symbol={symbol} />
-            <span className="absolute left-1/2 top-1/2 z-10 flex size-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-[4px] border-background bg-secondary shadow-[0_8px_18px_rgba(0,0,0,0.35)]">
+            <span className="absolute left-1/2 top-[140px] z-[2] flex h-10 min-h-10 max-h-10 w-10 min-w-10 max-w-10 -translate-x-1/2 items-center justify-center gap-2 rounded-[14px] border-[4px] border-card bg-secondary px-4 py-2">
               <Image
                 src="/assets/swap/arrow-down.svg"
                 alt=""
                 width={11}
                 height={11}
+                className="size-[11px] max-w-none shrink-0"
                 aria-hidden="true"
               />
             </span>
