@@ -11,18 +11,22 @@ export function Movement({
 }: {
   value: number | null;
   compact?: boolean;
-  variant?: 'default' | 'summary' | 'table';
+  variant?: 'default' | 'featured' | 'summary' | 'table';
 }) {
   if (value === null) return <span className="text-muted-foreground">—</span>;
   const positive = value > 0;
   const neutral = value === 0;
   const tableStyle = variant === 'table';
   const summaryStyle = variant === 'summary';
+  const featuredStyle = variant === 'featured';
   const DirectionIcon = positive ? ArrowUpRight : ArrowDownRight;
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-0.5 whitespace-nowrap font-medium tabular',
+        'inline-flex items-center gap-0.5 whitespace-nowrap tabular',
+        featuredStyle
+          ? 'h-[22px] text-base font-[570] leading-[22px]'
+          : 'font-medium',
         positive && 'text-positive',
         !positive && !neutral && 'text-negative',
         neutral && 'text-muted-foreground',
@@ -33,9 +37,21 @@ export function Movement({
       )}
     >
       {neutral ? (
-        <Minus className="size-3" aria-hidden="true" />
+        <Minus
+          className={featuredStyle ? 'size-5' : 'size-3'}
+          aria-hidden="true"
+        />
       ) : tableStyle ? (
         <TrendArrowIcon direction={positive ? 'up' : 'down'} />
+      ) : featuredStyle ? (
+        <Image
+          src={`/assets/trading/arrow-${positive ? 'up' : 'down'}-01.svg`}
+          alt=""
+          width={20}
+          height={20}
+          className="size-5 shrink-0"
+          aria-hidden="true"
+        />
       ) : summaryStyle ? (
         <Image
           src={`/assets/market-arrow-${positive ? 'up' : 'down'}.svg`}
@@ -49,7 +65,7 @@ export function Movement({
       )}
       <span>
         {formatPercent(
-          tableStyle || summaryStyle ? Math.abs(value) : value,
+          tableStyle || summaryStyle || featuredStyle ? Math.abs(value) : value,
           false,
         )}
       </span>

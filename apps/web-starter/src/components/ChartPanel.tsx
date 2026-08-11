@@ -13,6 +13,45 @@ import { EmptyState, ResourceError } from './ResourceState';
 import { PriceChart } from './PriceChart';
 import { RangeSelector } from './RangeSelector';
 
+function FeaturedPrice({ value }: { value: number | null }) {
+  const formatted = formatPrice(value);
+  const [whole, fraction] = formatted.split('.');
+  const hasCurrency = whole.startsWith('$');
+
+  return (
+    <p
+      className="flex h-12 items-baseline gap-0.5 tabular"
+      aria-label={`Current price: ${formatted}`}
+    >
+      {hasCurrency && (
+        <span
+          data-slot="price-currency"
+          className="h-10 text-[36px] font-[670] leading-10 text-muted-foreground"
+          aria-hidden="true"
+        >
+          $
+        </span>
+      )}
+      <span
+        data-slot="price-integer"
+        className="h-12 text-[48px] font-[570] leading-12 text-foreground"
+        aria-hidden="true"
+      >
+        {hasCurrency ? whole.slice(1) : whole}
+      </span>
+      {fraction && (
+        <span
+          data-slot="price-fraction"
+          className="h-10 text-[36px] font-[670] leading-10 text-foreground"
+          aria-hidden="true"
+        >
+          .{fraction}
+        </span>
+      )}
+    </p>
+  );
+}
+
 export function ChartPanel({
   token,
   selectedRange,
@@ -47,13 +86,11 @@ export function ChartPanel({
         Price history
       </h2>
       <div className="flex h-[78px] items-start justify-between gap-6">
-        <div className="flex h-[78px] flex-col justify-center gap-2">
-          <p className="tabular text-5xl font-semibold leading-none tracking-[-0.025em]">
-            {formatPrice(token.price)}
-          </p>
-          <div className="flex items-center gap-1 text-base">
-            <Movement value={token.changePercent24h} />
-            <span className="font-medium text-muted-foreground">24H</span>
+        <div className="flex h-[78px] min-w-[106px] flex-col items-start justify-center gap-2">
+          <FeaturedPrice value={token.price} />
+          <div className="flex h-[22px] items-center gap-0.5 text-base leading-[22px]">
+            <Movement value={token.changePercent24h} variant="featured" />
+            <span className="font-[570] text-muted-foreground">24H</span>
             {isUpdating && (
               <span
                 className="ml-2 inline-flex items-center gap-1.5 text-xs text-muted-foreground"
