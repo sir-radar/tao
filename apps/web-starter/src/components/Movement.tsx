@@ -30,7 +30,8 @@ export function Movement({
         positive && 'text-positive',
         !positive && !neutral && 'text-negative',
         neutral && 'text-muted-foreground',
-        compact && 'w-fit rounded-lg px-2 py-0.5 text-xs leading-4',
+        compact &&
+          'h-5 w-fit gap-1 rounded-lg px-2 py-0.5 text-xs font-[570] leading-4',
         compact && positive && 'bg-[#132a06]',
         compact && !positive && !neutral && 'bg-[#34191d]',
         compact && neutral && 'bg-secondary',

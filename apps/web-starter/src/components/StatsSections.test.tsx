@@ -82,7 +82,7 @@ const stats: TokenStats = {
 
 describe('StatsSections', () => {
   it('uses the supplied movement assets and renders split trading bars', () => {
-    const { container } = render(
+    const { container, rerender } = render(
       <StatsSections
         token={token}
         selectedRange="24h"
@@ -106,13 +106,34 @@ describe('StatsSections', () => {
       within(tradingPanel as HTMLElement)
         .getByText('Net volume')
         .closest('div')
-        ?.querySelector('svg[data-trend-arrow="up"]'),
+        ?.querySelector('img[src*="trading/arrow-up-01.svg"]'),
     ).toBeInTheDocument();
 
     const priceChange = screen.getByText('Price change (24H)').closest('div');
     expect(
-      priceChange?.querySelector('svg[data-trend-arrow="up"]'),
+      priceChange?.querySelector('img[src*="trading/arrow-up-01.svg"]'),
     ).toBeInTheDocument();
+
+    const highlightsPanel = screen
+      .getByRole('heading', { name: 'Highlights (24H)' })
+      .closest('div.rounded-2xl');
+    expect(
+      within(highlightsPanel as HTMLElement)
+        .getAllByText('Market cap')[0]
+        .closest('div')
+        ?.querySelector('dd'),
+    ).toHaveClass('text-xl', 'leading-5');
+    expect(
+      within(tradingPanel as HTMLElement).getByText('Net volume'),
+    ).toHaveClass('border-dashed');
+    expect(
+      within(tradingPanel as HTMLElement)
+        .getByText('Net volume')
+        .closest('div'),
+    ).toHaveClass('items-end', 'text-right');
+    expect(
+      within(tradingPanel as HTMLElement).getByText('USD').parentElement,
+    ).toHaveClass('h-9', 'w-[95px]');
 
     const volumeBar = screen.getByRole('img', {
       name: 'Volume: 60% buy and 40% sell',
@@ -120,5 +141,28 @@ describe('StatsSections', () => {
     expect(volumeBar.children).toHaveLength(2);
     expect(volumeBar.children[0]).toHaveClass('bg-positive');
     expect(volumeBar.children[1]).toHaveClass('bg-negative');
+
+    rerender(
+      <StatsSections
+        token={{ ...token, changePercent24h: -2.1 }}
+        selectedRange="24h"
+        displayed={{
+          ...stats,
+          price: { ...stats.price, changePercent: -3.09 },
+          trading: { ...stats.trading, netVolume: -2_000 },
+        }}
+        isInitialLoading={false}
+        isUpdating={false}
+        error={null}
+        onRetry={() => undefined}
+      />,
+    );
+
+    expect(
+      container.querySelector('img[src*="market-arrow-down.svg"]'),
+    ).toBeInTheDocument();
+    expect(
+      container.querySelectorAll('img[src*="trading/arrow-down-01.svg"]'),
+    ).toHaveLength(2);
   });
 });

@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import type {
   HistoryRange,
   NullableNumber,
@@ -21,7 +22,6 @@ import { Spinner } from '@/components/ui/spinner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Movement } from './Movement';
 import { ResourceError } from './ResourceState';
-import { TrendArrowIcon } from './TrendArrowIcon';
 
 type Metric = {
   label: string;
@@ -40,31 +40,50 @@ function MetricGrid({
   return (
     <dl
       className={cn(
-        'grid min-w-0 gap-x-6 gap-y-4',
+        'grid min-w-0 gap-y-4',
         layout === 'highlights' &&
-          'grid-cols-6 max-[1550px]:grid-cols-4 max-[1250px]:grid-cols-3',
-        layout === 'two-columns' && 'grid-cols-2',
-        layout === 'three-columns' && 'grid-cols-3',
+          'grid-cols-6 gap-x-6 min-[1251px]:grid-rows-[68px_64px] max-[1550px]:grid-cols-4 max-[1250px]:grid-cols-3',
+        layout === 'two-columns' && 'grid-cols-2 gap-x-4',
+        layout === 'three-columns' && 'grid-cols-3 gap-x-4',
       )}
     >
       {metrics.map((metric) => (
         <div
           key={metric.label}
-          className={cn('min-w-0', metric.align === 'end' && 'text-right')}
+          className={cn(
+            'min-w-0',
+            metric.align === 'end' && 'flex flex-col items-end text-right',
+          )}
         >
           <dt
             className={cn(
-              'truncate leading-4 text-muted-foreground',
-              layout === 'highlights' ? 'text-sm' : 'text-xs',
+              'truncate font-[430] text-muted-foreground',
+              layout === 'highlights'
+                ? 'text-sm leading-5 text-[#a1a1a1]'
+                : 'w-fit max-w-full border-b border-dashed border-white/20 text-xs leading-4',
             )}
           >
             {metric.label}
           </dt>
-          <dd className="mt-0.5 min-h-[22px] truncate text-base font-medium leading-[22px] tabular">
+          <dd
+            className={cn(
+              'truncate font-[570] tabular',
+              layout === 'highlights'
+                ? 'min-h-5 text-xl leading-5'
+                : 'min-h-[22px] text-base leading-[22px]',
+            )}
+          >
             {metric.value}
           </dd>
           {metric.detail && (
-            <dd className="mt-0.5 truncate text-xs leading-4 text-muted-foreground">
+            <dd
+              className={cn(
+                'truncate font-[430] text-muted-foreground',
+                layout === 'highlights'
+                  ? 'mt-1 text-xs leading-4'
+                  : 'text-sm leading-5',
+              )}
+            >
               {metric.detail}
             </dd>
           )}
@@ -93,7 +112,7 @@ function StatPanel({
       )}
     >
       <div className="flex min-h-8 items-center justify-between gap-4">
-        <h3 className="text-xl font-medium leading-8">{title}</h3>
+        <h3 className="text-xl font-[570] leading-8">{title}</h3>
         {titleRight}
       </div>
       {children}
@@ -104,13 +123,13 @@ function StatPanel({
 function CurrencyPreview() {
   return (
     <div
-      className="flex h-9 items-center rounded-[10px] bg-secondary p-1"
+      className="flex h-9 w-[95px] items-center rounded-[10px] bg-secondary p-1"
       aria-label="Currency preview"
     >
-      <span className="flex h-7 items-center rounded-md bg-card px-2 text-xs font-medium shadow-sm">
+      <span className="flex h-7 w-11 items-center justify-center rounded-md bg-card text-sm font-[570] leading-5 shadow-sm">
         USD
       </span>
-      <span className="flex h-7 items-center px-2 text-xs font-medium text-muted-foreground">
+      <span className="flex h-7 w-[43px] items-center justify-center text-sm font-[570] leading-5 text-muted-foreground">
         TAO
       </span>
     </div>
@@ -148,7 +167,16 @@ function DirectionalValue({
         direction === null && 'text-muted-foreground',
       )}
     >
-      {direction && <TrendArrowIcon direction={direction} />}
+      {direction && (
+        <Image
+          src={`/assets/trading/arrow-${direction}-01.svg`}
+          alt=""
+          width={16}
+          height={16}
+          className="size-4 shrink-0"
+          aria-hidden="true"
+        />
+      )}
       <span>{format(Math.abs(value))}</span>
       <span className="sr-only">
         {direction === 'up'
@@ -248,18 +276,21 @@ function buildMetricGroups({
     metric('Current price', formatPrice(stats.price.close)),
     metric(
       `Price change (${RANGE_LABELS[stats.range]})`,
-      <Movement value={stats.price.changePercent} variant="table" />,
+      <DirectionalValue
+        value={stats.price.changePercent}
+        format={(value) => formatPercent(value, false)}
+      />,
     ),
     metric('Low', formatPrice(stats.price.low)),
     metric('High', formatPrice(stats.price.high)),
     metric(
-      'All-time high',
+      'All time high',
       formatPrice(stats.price.allTimeHigh?.price ?? null),
       {
         detail: formatDate(stats.price.allTimeHigh?.timestamp ?? null),
       },
     ),
-    metric('All-time low', formatPrice(stats.price.allTimeLow?.price ?? null), {
+    metric('All time low', formatPrice(stats.price.allTimeLow?.price ?? null), {
       detail: formatDate(stats.price.allTimeLow?.timestamp ?? null),
     }),
   ];
@@ -318,7 +349,7 @@ function TradingBars({ stats }: { stats: TokenStats }) {
   ];
 
   return (
-    <div className="space-y-3.5">
+    <div className="space-y-2">
       {groups.map((group) => {
         const total =
           group.buy === null || group.sell === null
@@ -328,7 +359,7 @@ function TradingBars({ stats }: { stats: TokenStats }) {
         const sellShare = buyShare === null ? null : 100 - buyShare;
         return (
           <div key={group.label}>
-            <div className="mb-1.5 flex justify-between gap-6 text-xs leading-4">
+            <div className="mb-2 flex justify-between gap-6 text-xs leading-4">
               <span className="min-w-0">
                 <span className="block text-muted-foreground">
                   {group.buyLabel}
