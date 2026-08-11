@@ -20,7 +20,7 @@ export function RangeSelector({
       value={value}
       spacing={0}
       aria-label="Price history range"
-      className="rounded-xl bg-secondary p-1"
+      className="h-11 w-[380px] rounded-2xl bg-secondary p-1 max-[1350px]:w-[350px] max-[1100px]:w-[320px]"
       onValueChange={(next) => {
         if (next) onValueChange(next as HistoryRange);
       }}
@@ -30,7 +30,12 @@ export function RangeSelector({
           key={range}
           value={range}
           aria-label={`${RANGE_LABELS[range]} price range`}
-          className="h-7 min-w-9 rounded-lg px-2 text-[11px] text-muted-foreground data-[state=on]:bg-accent data-[state=on]:text-foreground"
+          className="h-9 min-w-0 flex-1 rounded-[14px] px-2 text-sm font-medium text-muted-foreground data-[state=on]:bg-card data-[state=on]:text-foreground data-[state=on]:shadow-sm"
+          onKeyDown={(event) => {
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+            event.preventDefault();
+            onValueChange(range);
+          }}
         >
           {RANGE_LABELS[range]}
         </ToggleGroupItem>

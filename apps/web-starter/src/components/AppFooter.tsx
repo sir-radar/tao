@@ -1,6 +1,19 @@
+'use client';
+
+import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/utils';
+
 export function AppFooter() {
+  const detailView = usePathname().startsWith('/tokens/');
   return (
-    <footer className="page-width mt-auto flex h-[84px] shrink-0 items-start justify-between gap-8 py-8 text-sm leading-5 text-muted-foreground">
+    <footer
+      className={cn(
+        'mt-auto flex shrink-0 items-start justify-between gap-8 text-sm leading-5 text-muted-foreground',
+        detailView
+          ? 'detail-footer detail-page-width'
+          : 'page-width h-[84px] py-8',
+      )}
+    >
       <span>© 2026 TAO.com – All rights reserved.</span>
       <span className="flex items-center gap-3 text-right">
         <span>API Documentation</span>

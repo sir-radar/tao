@@ -46,7 +46,7 @@ Token Details keys detail, history, and stats queries by token and range. Range 
 
 ## Design evidence
 
-The connected Figma identity lacked editor access to file `ShGOnid4sBkwGybMICX0qh`, including the condensed frame at node `5:2035`. I used the supplied 1024px screenshot, the pasted Figma CSS export, and the supplied SVG files instead.
+The connected Figma identity lacked editor access to file `ShGOnid4sBkwGybMICX0qh`, including the condensed Explore frame at node `5:2035` and the Token Details Stats frame at node `5:4313`. The Stats request returned debug UUID `22c5e20b-1330-46e9-a4d0-2febe270ff71`. I stopped after each failed context call and used the supplied screenshots, CSS exports, and SVG files.
 
 The Explore page uses the frame's measured geometry:
 
@@ -61,6 +61,16 @@ At 1024px, the layout uses 24px gutters, six 149.33px market cards, the icon-onl
 The header uses the supplied TAO.com logo. Market-summary badges use the supplied 12px up and down arrows, and the market-view tabs render the six supplied 16px SVGs. The filter control uses the supplied `Settings2.svg`. The source material did not include token-logo files, so token rows retain neutral initial avatars instead of fabricated subnet marks. The CSS export names Haffer, but the repository contains no Haffer font file; the font stack uses Haffer when installed and falls back to Inter or the system sans-serif.
 
 Row menus are closed by default and open beneath the active row's ellipsis button. They expose disabled preview actions only. Transaction counts use ungrouped digits to match the supplied table treatment.
+
+Token Details follows the Stats frame's 1920×2042 geometry:
+
+- 72px header and a 164px full-width token context band
+- 1322px chart and stats workspace beside a 430px preview rail, with a 40px gap
+- 542px chart block and a 1706px content region
+- 236px Highlights, 354px Financials, 334px Subnet data, 402px Trading volume, and 196px Price history blocks
+- 560px swap preview, 356px position preview, and 228px orders preview
+
+The grouped blocks render every usable value from the stats response. The implementation leaves out screenshot badges that would require made-up percentage changes. The position and orders rail remains disabled preview content.
 
 ## Verification
 
@@ -79,12 +89,16 @@ pnpm web:build
 
 Browser checks covered Explore at 1728×1117, 1024×1117, and 1280×900. The 1728px measurement matched the supplied frame geometry, the 1024px table scrolled inside its labelled region, and none of the three widths produced horizontal document overflow. The checks also covered menu toggle behavior, ascending and descending market-cap URL state, `aria-sort`, and browser console warnings.
 
+Token Details checks covered 1920×1080, 1728×1117, 1280×900, and 1024×1117 viewports. The 1920px full-page render measured 1920×2042 with no document overflow. The 1728px and 1280px layouts retained the paired stat blocks. The 1024px layout kept the 632px workspace and 320px rail while stacking the stat blocks inside the workspace. A rapid `1H` → `7D` → `30D` sequence finished with the 30D URL, selected control, stats, and 721-point chart. Enter activated the focused 1Y control, and the final check restored 24H. A clean reload produced no console warnings or errors. Explore retained its 1600px and 976px table regions after the route-specific header and footer changes.
+
 ## Assumptions and tradeoffs
 
 - API values remain the source of truth, so market totals and sorted token names can differ from placeholder data in the screenshot.
 - The default table sort remains market-cap descending even when synthetic filler tokens rank above the ten featured subnet definitions.
 - USD and TAO controls, market filters, wallet preview, download control, and swap buttons have visual treatment without product side effects.
 - The fixed table viewport keeps the 1728px page and footer aligned with the reference while preserving every token through internal scrolling.
+- Token artwork was not supplied. Token Details uses a high-contrast initial mark in the frame's lime treatment instead of drawing the subnet logo from the screenshot.
+- Screenshot values for unavailable stat deltas were omitted. The API remains the source for market, range, supply, trading, subnet, and price-history values.
 
 ## Known limits
 

@@ -1,16 +1,31 @@
-import { ArrowDown, Info, WalletCards } from 'lucide-react';
-import type { TokenDetail } from '@/lib/api/contracts';
-import { formatPrice } from '@/lib/format';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
+import {
+  ArrowDown,
+  CircleDollarSign,
+  SlidersHorizontal,
+  X,
+} from 'lucide-react';
+import type { TokenDetail, TokenStats } from '@/lib/api/contracts';
+import {
+  formatCompact,
+  formatCurrencyCompact,
+  formatPercent,
+  formatPrice,
+} from '@/lib/format';
 
-function TokenMark({ name }: { name: string }) {
+function TokenMark({
+  name,
+  size = 'default',
+}: {
+  name: string;
+  size?: 'default' | 'large';
+}) {
   return (
     <span
-      className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground"
+      className={
+        size === 'large'
+          ? 'flex size-10 shrink-0 items-center justify-center rounded-full bg-[#e8ff00] text-sm font-semibold text-[#101014]'
+          : 'flex size-8 shrink-0 items-center justify-center rounded-full bg-[#e8ff00] text-xs font-semibold text-[#101014]'
+      }
       aria-hidden="true"
     >
       {name.slice(0, 1).toUpperCase()}
@@ -18,176 +33,239 @@ function TokenMark({ name }: { name: string }) {
   );
 }
 
-export function TradingRail({ token }: { token: TokenDetail }) {
+function SwapTile({
+  side,
+  token,
+  symbol,
+}: {
+  side: 'Sell' | 'Buy';
+  token: TokenDetail;
+  symbol: string;
+}) {
+  const sell = side === 'Sell';
+  return (
+    <div className="flex h-[156px] flex-col gap-3 rounded-3xl bg-[#201e29] p-5">
+      <div className="flex h-[22px] items-center justify-between text-base font-medium leading-[22px]">
+        <span>{side}</span>
+        {sell && <span className="text-sm text-primary">25% · 50% · Max</span>}
+      </div>
+      <div className="flex h-12 items-center gap-3">
+        <input
+          aria-label={`${side} amount`}
+          value="0"
+          readOnly
+          className="min-w-0 flex-1 border-0 bg-transparent p-0 text-4xl font-medium leading-10 tabular text-foreground outline-none disabled:opacity-100"
+        />
+        <span className="flex h-12 items-center gap-3 rounded-[32px] border border-white/8 bg-card py-2 pl-2 pr-4 text-sm font-medium">
+          {sell ? (
+            <span className="flex size-8 items-center justify-center rounded-full bg-white text-sm font-semibold text-black">
+              τ
+            </span>
+          ) : (
+            <TokenMark name={token.name} />
+          )}
+          {sell ? 'TAO' : symbol}
+        </span>
+      </div>
+      <div className="flex h-[22px] items-center justify-between text-sm leading-[22px] text-muted-foreground">
+        <span>$0</span>
+        <span>Balance: {sell ? '19.432112 TAO' : `0.00 ${symbol}`}</span>
+      </div>
+    </div>
+  );
+}
+
+export function TradingRail({
+  token,
+  stats,
+}: {
+  token: TokenDetail;
+  stats?: TokenStats | null;
+}) {
   const symbol = token.symbol ?? token.id.toUpperCase();
   return (
-    <aside aria-label="Trading preview" className="space-y-4">
-      <Card className="bg-card">
-        <CardHeader className="border-b">
-          <div className="flex items-center justify-between gap-3">
-            <CardTitle>Swap preview</CardTitle>
-            <Badge variant="secondary">Preview only</Badge>
-          </div>
-          <p className="text-[11px] text-muted-foreground">
-            Trading is disabled in this take-home implementation.
-          </p>
-        </CardHeader>
-        <CardContent>
-          <fieldset
-            disabled
-            aria-describedby="trading-preview-description"
-            className="space-y-3"
-          >
-            <p id="trading-preview-description" className="sr-only">
-              These controls are visual only and cannot submit a transaction.
-            </p>
-            <div className="flex rounded-lg bg-secondary p-1">
-              <Button type="button" size="sm" className="flex-1" disabled>
-                Swap
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="flex-1"
-                disabled
-              >
-                Limit order
-              </Button>
-            </div>
-
-            <div className="rounded-xl border bg-background/45 p-3">
-              <div className="flex items-center justify-between text-xs">
-                <span>Sell</span>
-                <span className="text-primary">25% · 50% · Max</span>
-              </div>
-              <div className="mt-3 flex items-center gap-2">
-                <Input
-                  aria-label="Sell amount"
-                  value="0"
-                  readOnly
-                  className="h-11 border-0 bg-transparent px-0 text-2xl"
-                />
-                <Badge variant="secondary">TAO</Badge>
-              </div>
-              <p className="mt-1 text-[10px] text-muted-foreground">
-                Balance: 0 TAO
-              </p>
-            </div>
-
-            <div className="relative -my-5 flex justify-center">
-              <span className="z-10 flex size-8 items-center justify-center rounded-full border bg-card">
-                <ArrowDown className="size-3.5" aria-hidden="true" />
+    <aside aria-label="Trading preview" className="space-y-6">
+      <section
+        aria-labelledby="swap-preview-title"
+        className="h-[560px] space-y-4"
+      >
+        <div className="flex h-[108px] items-center gap-3 rounded-2xl bg-[#3d3120] px-4 py-3">
+          <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-[#3e73c4] text-white">
+            <CircleDollarSign className="size-4" aria-hidden="true" />
+          </span>
+          <div className="min-w-0 flex-1 self-start">
+            <div className="flex h-5 items-center justify-between gap-3">
+              <h2 id="swap-preview-title" className="text-sm font-medium">
+                Swap with tUSDT
+              </h2>
+              <span className="rounded-full bg-card px-2 py-1 text-[10px] font-medium">
+                Preview only
               </span>
             </div>
-
-            <div className="rounded-xl border bg-background/45 p-3">
-              <div className="flex items-center justify-between text-xs">
-                <span>Buy</span>
-              </div>
-              <div className="mt-3 flex items-center gap-2">
-                <Input
-                  aria-label="Buy amount"
-                  value="0"
-                  readOnly
-                  className="h-11 border-0 bg-transparent px-0 text-2xl"
-                />
-                <span className="inline-flex items-center gap-2 text-xs font-medium">
-                  <TokenMark name={token.name} /> {symbol}
-                </span>
-              </div>
-              <p className="mt-1 text-[10px] text-muted-foreground">
-                Balance: 0 {symbol}
-              </p>
-            </div>
-            <Button type="button" className="w-full" disabled>
-              <WalletCards className="size-4" aria-hidden="true" />
-              Enter an amount
-            </Button>
-          </fieldset>
-        </CardContent>
-      </Card>
-
-      <Card className="bg-card">
-        <CardHeader>
-          <CardTitle>Position</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between gap-3">
-            <span className="flex items-center gap-2 text-xs font-medium">
-              <TokenMark name={token.name} />
-              {token.name}
-            </span>
-            <span className="tabular text-sm font-medium">$2,450.90</span>
+            <p className="mt-1 max-w-[242px] text-xs leading-5 text-foreground/90">
+              TAO.com supports swaps with Bittensor and popular ERC20 tokens.
+            </p>
           </div>
-          <dl className="space-y-2 text-[11px]">
-            <div className="flex justify-between gap-3">
-              <dt className="text-muted-foreground">Average cost</dt>
-              <dd>{formatPrice(token.price)}</dd>
-            </div>
-            <div className="flex justify-between gap-3">
-              <dt className="text-muted-foreground">Token APY</dt>
-              <dd>—</dd>
-            </div>
-            <div className="flex justify-between gap-3">
-              <dt className="text-muted-foreground">Unrealized return</dt>
-              <dd className="text-positive">+$450.90</dd>
-            </div>
-            <div className="flex justify-between gap-3">
-              <dt className="text-muted-foreground">Realized return</dt>
-              <dd>—</dd>
-            </div>
-          </dl>
-        </CardContent>
-      </Card>
+          <X
+            className="size-4 shrink-0 text-muted-foreground"
+            aria-hidden="true"
+          />
+        </div>
 
-      <Card className="bg-card">
-        <CardHeader>
-          <CardTitle>Orders</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
+        <div className="flex h-9 items-center justify-between">
+          <div className="flex h-9 items-center gap-1">
+            <span className="flex h-9 items-center rounded-[14px] bg-[#2d2546] px-4 text-sm font-medium text-primary">
+              Swap
+            </span>
+            <span className="flex h-9 items-center gap-2 rounded-[14px] border border-white/8 bg-card px-4 text-sm font-medium">
+              Limit Order
+              <small className="rounded-md bg-[#2d2546] px-1 text-[10px] text-primary">
+                New
+              </small>
+            </span>
+          </div>
+          <span className="flex size-9 items-center justify-center rounded-[14px] border border-white/8 bg-card">
+            <SlidersHorizontal className="size-4" aria-hidden="true" />
+          </span>
+        </div>
+
+        <fieldset
+          disabled
+          aria-describedby="trading-preview-description"
+          className="w-full min-w-0 space-y-4"
+        >
+          <p id="trading-preview-description" className="sr-only">
+            These controls are visual only and cannot submit a transaction.
+          </p>
+          <div className="relative flex h-80 flex-col gap-2">
+            <SwapTile side="Sell" token={token} symbol={symbol} />
+            <span className="absolute left-1/2 top-1/2 z-10 flex size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/8 bg-card shadow-lg">
+              <ArrowDown className="size-4" aria-hidden="true" />
+            </span>
+            <SwapTile side="Buy" token={token} symbol={symbol} />
+          </div>
+          <button
+            type="button"
+            disabled
+            className="flex h-12 w-full items-center justify-center rounded-2xl bg-secondary text-sm font-medium text-muted-foreground disabled:opacity-100"
+          >
+            Enter an amount
+          </button>
+        </fieldset>
+      </section>
+
+      <section
+        aria-labelledby="position-title"
+        className="flex h-[356px] flex-col gap-4 rounded-3xl bg-card p-6"
+      >
+        <h2 id="position-title" className="h-8 text-xl font-medium leading-8">
+          Position
+        </h2>
+        <div className="flex h-[54px] items-center justify-between gap-4">
+          <span className="flex min-w-0 items-center gap-3">
+            <TokenMark name={token.name} size="large" />
+            <span className="min-w-0">
+              <strong className="block truncate text-base font-medium leading-[22px]">
+                {token.name}
+              </strong>
+              <small className="block truncate text-sm leading-5 text-muted-foreground tabular">
+                90.009354 {symbol}
+              </small>
+            </span>
+          </span>
+          <span className="text-right">
+            <strong className="block text-xl font-medium leading-8 tabular">
+              $2,450.90
+            </strong>
+            <small className="block text-sm leading-[22px] text-positive">
+              ↑ 11.27% 24H
+            </small>
+          </span>
+        </div>
+        <dl className="h-[190px] text-sm">
           {[
-            { side: 'Sell', detail: 'Limit @ 0.00752', status: 'Pending' },
+            ['Average cost', formatPrice(token.price)],
+            [
+              'Token APY',
+              formatPercent(stats?.financials.averageStakeApy ?? null, false),
+            ],
+            ['Earned tokens', `↑ 35.999212 ${symbol}`],
+            ['Unrealized return', '+$450.90'],
+            ['Realized return', '—'],
+          ].map(([label, value], index) => (
+            <div
+              key={label}
+              className="flex h-[38px] items-center justify-between gap-4"
+            >
+              <dt className="text-muted-foreground">{label}</dt>
+              <dd
+                className={
+                  index === 2 || index === 3
+                    ? 'text-positive tabular'
+                    : 'tabular'
+                }
+              >
+                {value}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      <section
+        aria-labelledby="orders-title"
+        className="flex h-[228px] flex-col gap-4 rounded-3xl bg-card p-6"
+      >
+        <h2 id="orders-title" className="h-8 text-xl font-medium leading-8">
+          Orders
+        </h2>
+        <div className="h-[132px]">
+          {[
+            {
+              side: 'Sell',
+              detail: 'Limit @ 0.00752',
+              status: 'Pending',
+            },
             {
               side: 'Buy',
               detail: 'DCA, daily @ 3:45 PM',
               status: 'In progress',
             },
-          ].map((order, index) => (
-            <div key={order.side}>
-              {index > 0 && <Separator className="mb-3" />}
-              <div className="flex items-center justify-between gap-3 text-[11px]">
-                <span className="flex items-center gap-2">
-                  <TokenMark name={token.name} />
-                  <span>
-                    <strong
-                      className={
-                        order.side === 'Buy' ? 'text-positive' : 'text-negative'
-                      }
-                    >
-                      {order.side}
-                    </strong>{' '}
-                    {token.name}
-                    <small className="block text-muted-foreground">
-                      {order.detail}
-                    </small>
-                  </span>
-                </span>
-                <span className="text-right">
-                  100.00 {symbol}
-                  <small className="block text-muted-foreground">
-                    {order.status}
+          ].map((order) => (
+            <div
+              key={order.side}
+              className="flex h-[66px] items-center justify-between gap-4 border-b border-white/8 last:border-0"
+            >
+              <span className="flex min-w-0 items-center gap-3">
+                <TokenMark name={token.name} size="large" />
+                <span className="min-w-0">
+                  <strong
+                    className={
+                      order.side === 'Buy' ? 'text-positive' : 'text-negative'
+                    }
+                  >
+                    {order.side}
+                  </strong>{' '}
+                  {token.name}
+                  <small className="block truncate text-xs leading-5 text-muted-foreground">
+                    {order.detail}
                   </small>
                 </span>
-              </div>
+              </span>
+              <span className="shrink-0 text-right text-sm tabular">
+                {formatCompact(100)} {symbol}
+                <small className="block text-xs leading-5 text-muted-foreground">
+                  {order.status}
+                </small>
+              </span>
             </div>
           ))}
-          <p className="flex items-center gap-1.5 pt-1 text-[10px] text-muted-foreground">
-            <Info className="size-3" aria-hidden="true" /> Example data; no
-            order actions are available.
-          </p>
-        </CardContent>
-      </Card>
+        </div>
+        <span className="sr-only">
+          Position and order values are non-functional preview content. Current
+          market cap is {formatCurrencyCompact(token.marketCap)}.
+        </span>
+      </section>
     </aside>
   );
 }

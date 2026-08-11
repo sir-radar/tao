@@ -4,9 +4,9 @@
 
 I used Codex to inspect the repository, translate the supplied frame evidence into React and Tailwind changes, run local checks, and compare browser measurements against the reference image.
 
-The `frontend-skill` guidance kept the page focused on one dense exchange workspace. The `stop-slop` guidance shaped this write-up. The in-app browser measured element rectangles at the three target widths, exercised sorting and the row menu, and checked console output.
+The `frontend-skill` guidance kept each page focused on one dense exchange workspace. The `stop-slop` guidance shaped this write-up. The in-app browser measured element rectangles across both routes, exercised sorting, range selection, and keyboard activation, and checked console output.
 
-I requested Figma design context for the condensed node `5:2035` in file `ShGOnid4sBkwGybMICX0qh`. The connected identity lacked editor access, so I stopped after that failed call. The supplied screenshot, 20,483-line CSS export, logo, and movement arrows supplied the design evidence for this pass.
+I requested Figma design context for nodes `5:2035` and `5:4313` in file `ShGOnid4sBkwGybMICX0qh`. The connected identity lacked editor access, so I stopped after each failed call. The Stats call returned debug UUID `22c5e20b-1330-46e9-a4d0-2febe270ff71`. The supplied screenshots, CSS exports, logo, and movement arrows supplied the design evidence for the implementation.
 
 ## Workflow
 
@@ -15,6 +15,8 @@ I read the briefs, package manifests, backend token generation, API normalizatio
 For the icon updates, I compared SHA-256 hashes before and after adding the six user-provided market-view SVGs and `Settings2.svg`. The hashes matched, so the repository copies preserve the supplied bytes.
 
 The 1024px browser check reported a 976px content region at x=24, six 149.33px market cards, a table at y=290, a 604px table viewport, a 199×112 row menu at x=791.5/y=549.5, and the footer at y=1033. The condensed header placed its search, Download, and wallet controls at x=674, x=726, and x=856, matching the CSS export after accounting for the screenshot's frame outline.
+
+For Token Details, I mapped the 1920×2042 export into the 164px token band, 1322px workspace, 430px rail, chart controls, grouped stats, and disabled trade previews. I kept query caching, stale-request cancellation, partial errors, URL-backed ranges, and backend normalization. The browser exposed a missing keyboard activation path on the range controls, so I added Enter and Space handling plus a component test.
 
 ## Accepted and reworked suggestions
 
@@ -25,14 +27,19 @@ I accepted these generated changes after inspection:
 - URL-backed sorting and accessible row links from the existing implementation
 - a closed-by-default row menu anchored beneath the active ellipsis button
 - 100px condensed numeric columns and 122.22px default columns
+- the exported 1920px Token Details geometry and the five measured stats block heights
+- range-specific API data across highlights, financials, subnet data, trading volume, and price history
+- a dotted baseline chart with cached range switching and an accessible range summary
 
 I rewrote or rejected these proposals:
 
 - I replaced the first 1680px max-width pass with the CSS export's 1728px frame and 64px gutters after browser measurements showed the mismatch.
 - I kept backend-driven market values instead of copying placeholder numbers from the screenshot.
+- I omitted screenshot trend badges when the API did not supply a matching percentage change.
 - I kept market-cap sorting even though synthetic filler tokens can outrank the featured ten. Reordering the result would make the active sort label inaccurate.
-- I did not draw subnet logos from the screenshot. The supplied assets did not contain those vectors.
+- I did not draw subnet logos or social brand marks from the screenshot. The supplied assets did not contain those vectors.
+- I replaced the first Token Details layout after browser measurements showed that it was 36px wider than the page. A fieldset's intrinsic width caused the overflow; setting an explicit zero minimum restored the 430px rail.
 
 ## Verification
 
-I reviewed the diff and preserved the user's existing `.gitignore` change. I ran strict type checking, component and data tests, lint and formatting checks, backend checks, and production builds. Browser checks used 1728×1117, 1024×1117, and 1280×900 viewports. They checked document overflow, element geometry, the row-menu state, sort URLs, `aria-sort`, and console warnings. The icon pass checked each asset source, 16×16 rendered and natural dimensions, load completion, and console output at 1024×1117. The filter check confirmed the 44px control at x=813/y=229 and its centered 16px icon.
+I reviewed the diff and preserved the user's existing `.gitignore` change. I ran strict type checking, component and data tests, lint and formatting checks, backend checks, and production builds. Explore browser checks used 1728×1117, 1024×1117, and 1280×900 viewports. Token Details checks added 1920×1080 and reused the three desktop widths. They checked document overflow, frame geometry, all stat panel bounds, the disabled rail, range URLs, last-choice behavior, keyboard activation, accessible names, and console output. The icon pass checked each asset source, 16×16 rendered and natural dimensions, load completion, and console output at 1024×1117.

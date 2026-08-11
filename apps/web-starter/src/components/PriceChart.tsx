@@ -5,6 +5,7 @@ import {
   BaselineSeries,
   ColorType,
   CrosshairMode,
+  LineStyle,
   createChart,
   type BaselineData,
   type IChartApi,
@@ -13,7 +14,11 @@ import {
   type Time,
   type UTCTimestamp,
 } from 'lightweight-charts';
-import type { HistoryRange, PricePoint } from '@/lib/api/contracts';
+import {
+  RANGE_LABELS,
+  type HistoryRange,
+  type PricePoint,
+} from '@/lib/api/contracts';
 import { chartPriceDomain, chartPriceScale, describeSeries } from '@/lib/chart';
 import { formatPrice } from '@/lib/format';
 
@@ -88,13 +93,20 @@ export function PriceChart({
       height: container.clientHeight,
       layout: {
         background: { type: ColorType.Solid, color: 'transparent' },
-        textColor: '#96919f',
-        fontFamily: "Inter, 'Segoe UI', sans-serif",
-        fontSize: 11,
+        textColor: '#9391a1',
+        fontFamily: "Haffer, Inter, 'Segoe UI', sans-serif",
+        fontSize: 12,
       },
+      localization: { priceFormatter: (price: number) => formatPrice(price) },
       grid: {
-        vertLines: { color: 'rgba(150,145,159,0.06)' },
-        horzLines: { color: 'rgba(150,145,159,0.06)' },
+        vertLines: {
+          color: 'rgba(255,255,255,0.065)',
+          style: LineStyle.Dotted,
+        },
+        horzLines: {
+          color: 'rgba(255,255,255,0.065)',
+          style: LineStyle.Dotted,
+        },
       },
       crosshair: {
         mode: CrosshairMode.Normal,
@@ -129,6 +141,9 @@ export function PriceChart({
       bottomFillColor2: 'rgba(255,112,125,0.10)',
       lineWidth: 2,
       priceLineVisible: false,
+      baseLineVisible: true,
+      baseLineColor: 'rgba(255,255,255,0.20)',
+      baseLineStyle: LineStyle.Dotted,
       lastValueVisible: true,
       pointMarkersVisible: points.length === 1,
       pointMarkersRadius: 4,
@@ -187,12 +202,13 @@ export function PriceChart({
   return (
     <figure aria-labelledby="price-chart-caption">
       <figcaption id="price-chart-caption" className="sr-only">
-        {symbol} price chart in UTC. {summary.pointCount.toLocaleString()}{' '}
-        points. Open {formatPrice(summary.open)}, close{' '}
-        {formatPrice(summary.close)}, high {formatPrice(summary.high)}, low{' '}
-        {formatPrice(summary.low)}. Price finished {summary.direction}.
+        {symbol} {RANGE_LABELS[range]} price chart in UTC.{' '}
+        {summary.pointCount.toLocaleString()} points. Open{' '}
+        {formatPrice(summary.open)}, close {formatPrice(summary.close)}, high{' '}
+        {formatPrice(summary.high)}, low {formatPrice(summary.low)}. Price
+        finished {summary.direction}.
       </figcaption>
-      <div className="relative h-[380px] w-full max-[1100px]:h-[340px]">
+      <div className="relative h-[432px] w-full">
         <div
           ref={containerRef}
           className="absolute inset-0"

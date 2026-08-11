@@ -1,6 +1,8 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { RangeSelector } from './RangeSelector';
+
+afterEach(cleanup);
 
 describe('RangeSelector', () => {
   it('exposes all ranges and reports the selected value', () => {
@@ -16,6 +18,17 @@ describe('RangeSelector', () => {
     ).toHaveAttribute('aria-checked', 'true');
 
     fireEvent.click(screen.getByRole('radio', { name: '1Y price range' }));
+    expect(onValueChange).toHaveBeenCalledWith('1y');
+  });
+
+  it('supports keyboard activation', () => {
+    const onValueChange = vi.fn();
+    render(<RangeSelector value="24h" onValueChange={onValueChange} />);
+
+    fireEvent.keyDown(screen.getByRole('radio', { name: '1Y price range' }), {
+      key: 'Enter',
+    });
+
     expect(onValueChange).toHaveBeenCalledWith('1y');
   });
 });

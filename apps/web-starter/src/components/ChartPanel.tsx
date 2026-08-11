@@ -1,14 +1,20 @@
 import Image from 'next/image';
-import type { HistoryRange, HistorySeries } from '@/lib/api/contracts';
+import type {
+  HistoryRange,
+  HistorySeries,
+  TokenDetail,
+} from '@/lib/api/contracts';
 import { RANGE_LABELS } from '@/lib/api/contracts';
-import { Badge } from '@/components/ui/badge';
+import { formatPrice } from '@/lib/format';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
+import { Movement } from './Movement';
 import { EmptyState, ResourceError } from './ResourceState';
 import { PriceChart } from './PriceChart';
 import { RangeSelector } from './RangeSelector';
 
 export function ChartPanel({
+  token,
   selectedRange,
   displayed,
   symbol,
@@ -18,6 +24,7 @@ export function ChartPanel({
   onRangeChange,
   onRetry,
 }: {
+  token: TokenDetail;
   selectedRange: HistoryRange;
   displayed: HistorySeries | null;
   symbol: string;
@@ -34,26 +41,31 @@ export function ChartPanel({
     <section
       aria-labelledby="price-history-title"
       aria-busy={isInitialLoading || isUpdating}
-      className="min-w-0"
+      className="flex min-w-0 flex-col gap-2"
     >
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 id="price-history-title" className="text-sm font-medium">
-            Price history
-          </h2>
-          <p className="mt-0.5 text-[11px] text-muted-foreground">
-            {displayed
-              ? `Showing ${RANGE_LABELS[displayed.range]} in UTC`
-              : `${RANGE_LABELS[selectedRange]} in UTC`}
+      <h2 id="price-history-title" className="sr-only">
+        Price history
+      </h2>
+      <div className="flex h-[78px] items-start justify-between gap-6">
+        <div className="flex h-[78px] flex-col justify-center gap-2">
+          <p className="tabular text-5xl font-semibold leading-none tracking-[-0.025em]">
+            {formatPrice(token.price)}
           </p>
+          <div className="flex items-center gap-1 text-base">
+            <Movement value={token.changePercent24h} />
+            <span className="font-medium text-muted-foreground">24H</span>
+            {isUpdating && (
+              <span
+                className="ml-2 inline-flex items-center gap-1.5 text-xs text-muted-foreground"
+                aria-live="polite"
+              >
+                <Spinner className="size-3" /> Updating to{' '}
+                {RANGE_LABELS[selectedRange]}
+              </span>
+            )}
+          </div>
         </div>
-        <div className="flex flex-wrap items-center justify-end gap-2">
-          {isUpdating && (
-            <Badge variant="secondary" aria-live="polite">
-              <Spinner className="size-3" /> Updating to{' '}
-              {RANGE_LABELS[selectedRange]}
-            </Badge>
-          )}
+        <div className="flex items-center gap-4 pt-0 max-[1150px]:gap-2">
           <RangeSelector value={selectedRange} onValueChange={onRangeChange} />
           <div
             className="flex h-11 items-center rounded-2xl bg-secondary p-1"
@@ -102,15 +114,15 @@ export function ChartPanel({
         </div>
       </div>
 
-      <div className="min-h-[380px] rounded-xl border bg-card/20 px-2 pt-2 max-[1100px]:min-h-[340px]">
+      <div className="h-[456px] min-w-0 pb-6">
         {isInitialLoading ? (
-          <div className="flex h-[370px] flex-col justify-between p-5 max-[1100px]:h-[330px]">
+          <div className="flex h-full flex-col justify-between py-5">
             <Skeleton className="h-3 w-28" />
             <Skeleton className="h-48 w-full" />
             <Skeleton className="h-3 w-3/5" />
           </div>
         ) : error && !displayed ? (
-          <div className="flex h-[370px] items-center justify-center p-5 max-[1100px]:h-[330px]">
+          <div className="flex h-full items-center justify-center p-5">
             <ResourceError
               title={`Could not load ${RANGE_LABELS[selectedRange]} history`}
               error={error}
@@ -125,7 +137,7 @@ export function ChartPanel({
             symbol={symbol}
           />
         ) : (
-          <div className="flex h-[370px] items-center justify-center p-5 max-[1100px]:h-[330px]">
+          <div className="flex h-full items-center justify-center p-5">
             <EmptyState
               title="No price history"
               description={`No valid ${RANGE_LABELS[selectedRange]} points were returned for this token.`}

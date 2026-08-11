@@ -20,31 +20,23 @@ import { TradingRail } from './TradingRail';
 
 export function TokenDetailSkeleton() {
   return (
-    <main
-      id="main"
-      className="page-width flex-1 py-5"
-      aria-label="Loading token details"
-    >
-      <div className="grid grid-cols-[minmax(0,1fr)_clamp(320px,24vw,400px)] gap-6 max-[1100px]:gap-4 max-[900px]:grid-cols-1">
-        <div className="space-y-5">
-          <div className="space-y-4 border-b pb-5">
-            <Skeleton className="h-3 w-32" />
-            <div className="flex items-center gap-3">
-              <Skeleton className="size-11 rounded-full" />
-              <Skeleton className="h-7 w-44" />
-            </div>
-            <Skeleton className="h-9 w-36" />
-          </div>
-          <Skeleton className="h-[420px] w-full" />
-          <div className="grid grid-cols-2 gap-4 max-[900px]:grid-cols-1">
-            <Skeleton className="h-48" />
-            <Skeleton className="h-48" />
-          </div>
+    <main id="main" className="flex-1" aria-label="Loading token details">
+      <div className="detail-page-width flex h-[164px] flex-col justify-between border-b py-6">
+        <Skeleton className="h-4 w-32" />
+        <div className="flex items-center gap-3">
+          <Skeleton className="size-12 rounded-full" />
+          <Skeleton className="h-8 w-48" />
         </div>
-        <div className="space-y-4">
-          <Skeleton className="h-[410px]" />
-          <Skeleton className="h-52" />
-          <Skeleton className="h-44" />
+      </div>
+      <div className="detail-page-width grid grid-cols-[minmax(0,1fr)_clamp(320px,22.4vw,430px)] items-start gap-10 max-[1400px]:gap-6 max-[980px]:grid-cols-1">
+        <div className="space-y-6">
+          <Skeleton className="h-[542px] w-full rounded-none" />
+          <Skeleton className="h-[1140px] w-full rounded-2xl" />
+        </div>
+        <div className="space-y-6">
+          <Skeleton className="h-[560px] rounded-3xl" />
+          <Skeleton className="h-[356px] rounded-3xl" />
+          <Skeleton className="h-[228px] rounded-3xl" />
         </div>
       </div>
     </main>
@@ -150,11 +142,12 @@ export function TokenDetailPage({ id }: { id: string }) {
   const displayedHistory = historyQuery.data ?? cachedHistory ?? null;
   const displayedStats = statsQuery.data ?? cachedStats ?? null;
   return (
-    <main id="main" className="page-width flex-1 py-5">
-      <div className="grid grid-cols-[minmax(0,1fr)_clamp(320px,24vw,400px)] items-start gap-6 max-[1100px]:gap-4 max-[900px]:grid-cols-1">
-        <div className="min-w-0 space-y-5">
-          <PriceHeader token={token} />
+    <main id="main" className="flex-1">
+      <PriceHeader token={token} />
+      <div className="detail-page-width grid grid-cols-[minmax(0,1fr)_clamp(320px,22.4vw,430px)] items-start gap-10 max-[1400px]:gap-6 max-[980px]:grid-cols-1">
+        <div className="min-w-0 space-y-6">
           <ChartPanel
+            token={token}
             selectedRange={selectedRange}
             displayed={displayedHistory}
             symbol={token.symbol ?? token.id.toUpperCase()}
@@ -174,7 +167,7 @@ export function TokenDetailPage({ id }: { id: string }) {
             onRetry={() => statsQuery.refetch()}
           />
         </div>
-        <TradingRail token={token} />
+        <TradingRail token={token} stats={displayedStats} />
       </div>
     </main>
   );

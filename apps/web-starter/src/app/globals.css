@@ -115,6 +115,15 @@
     margin-inline: auto;
     padding-inline: 64px;
   }
+  .detail-page-width {
+    width: min(100%, 1920px);
+    margin-inline: auto;
+    padding-inline: 64px;
+  }
+  .detail-footer {
+    height: 100px;
+    padding-block: 40px;
+  }
   .thin-scrollbar {
     scrollbar-color: var(--accent) transparent;
     scrollbar-width: thin;
@@ -134,12 +143,14 @@
 }
 
 @media (max-width: 1280px) {
-  .page-width {
+  .page-width,
+  .detail-page-width {
     padding-inline: 32px;
   }
 }
 @media (max-width: 1100px) {
-  .page-width {
+  .page-width,
+  .detail-page-width {
     padding-inline: 24px;
   }
   .token-market-table {
