@@ -5,6 +5,10 @@ const compact = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 2,
 });
 const integer = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
+const ungroupedInteger = new Intl.NumberFormat('en-US', {
+  maximumFractionDigits: 0,
+  useGrouping: false,
+});
 const compactCurrency = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',
@@ -17,6 +21,9 @@ export function formatCompact(value: NullableNumber, prefix = '') {
 }
 export function formatInteger(value: NullableNumber) {
   return value === null ? '—' : integer.format(value);
+}
+export function formatIntegerUngrouped(value: NullableNumber) {
+  return value === null ? '—' : ungroupedInteger.format(value);
 }
 export function formatCurrencyCompact(value: NullableNumber) {
   return value === null ? '—' : compactCurrency.format(value);

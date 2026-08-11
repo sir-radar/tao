@@ -30,7 +30,7 @@ import type { TokenListItem } from '@/lib/api/contracts';
 import {
   formatCurrencyCompact,
   formatDecimal,
-  formatInteger,
+  formatIntegerUngrouped,
   formatPrice,
 } from '@/lib/format';
 import { sortTokens, type SortDirection, type SortKey } from '@/lib/market';
@@ -241,7 +241,7 @@ const TokenRow = memo(function TokenRow({
         {formatCurrencyCompact(token.sellVolume24h)}
       </TableCell>
       <TableCell className="px-4 text-right text-muted-foreground tabular">
-        {formatInteger(token.transactions24h)}
+        {formatIntegerUngrouped(token.transactions24h)}
       </TableCell>
       <TableCell className="px-4 text-right">
         <Emissions value={token.emissionsPerDay} />
@@ -283,19 +283,10 @@ export function TokenTable({
     () => sortTokens(tokens, sortKey, direction),
     [tokens, sortKey, direction],
   );
-  const defaultOpenId = sorted[3]?.id ?? null;
-  const [openTokenId, setOpenTokenId] = useState<string | null | undefined>();
-  const visibleOpenTokenId =
-    openTokenId === undefined ? defaultOpenId : openTokenId;
-  const handleToggleMenu = useCallback(
-    (id: string) => {
-      setOpenTokenId((current) => {
-        const visibleCurrent = current === undefined ? defaultOpenId : current;
-        return visibleCurrent === id ? null : id;
-      });
-    },
-    [defaultOpenId],
-  );
+  const [openTokenId, setOpenTokenId] = useState<string | null>(null);
+  const handleToggleMenu = useCallback((id: string) => {
+    setOpenTokenId((current) => (current === id ? null : id));
+  }, []);
 
   return (
     <Table
@@ -371,7 +362,7 @@ export function TokenTable({
           <TokenRow
             key={token.id}
             token={token}
-            menuOpen={visibleOpenTokenId === token.id}
+            menuOpen={openTokenId === token.id}
             onToggleMenu={handleToggleMenu}
           />
         ))}

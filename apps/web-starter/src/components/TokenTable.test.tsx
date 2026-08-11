@@ -76,5 +76,24 @@ describe('TokenTable', () => {
     expect(
       emissionsCell.querySelector('svg[data-trend-arrow="up"]'),
     ).toBeInTheDocument();
+
+    expect(screen.getByText('4342')).toBeInTheDocument();
+    expect(screen.queryByText('4,342')).not.toBeInTheDocument();
+
+    const moreButton = screen.getByRole('button', {
+      name: /more actions for alpha token/i,
+    });
+    expect(moreButton).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+
+    fireEvent.click(moreButton);
+    expect(moreButton).toHaveAttribute('aria-expanded', 'true');
+    const menu = screen.getByRole('menu', {
+      name: /actions for alpha token/i,
+    });
+    expect(menu).toHaveClass('top-[46px]', 'right-[-6px]');
+
+    fireEvent.click(moreButton);
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
   });
 });

@@ -58,7 +58,7 @@ The Explore page uses the frame's measured geometry:
 
 The header uses the supplied TAO.com logo. Market-summary badges use the supplied 12px up and down arrows. The source material did not include token-logo files, so token rows retain neutral initial avatars instead of fabricated subnet marks. The CSS export names Haffer, but the repository contains no Haffer font file; the font stack uses Haffer when installed and falls back to Inter or the system sans-serif.
 
-The default row menu opens on the fourth sorted row to reproduce the attached reference state. It only exposes disabled preview actions. Users can close and reopen it with the row's ellipsis button.
+Row menus are closed by default and open beneath the active row's ellipsis button. They expose disabled preview actions only. Transaction counts use ungrouped digits to match the supplied table treatment.
 
 ## Verification
 
