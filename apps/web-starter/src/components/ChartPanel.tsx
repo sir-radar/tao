@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import type { HistoryRange, HistorySeries } from '@/lib/api/contracts';
 import { RANGE_LABELS } from '@/lib/api/contracts';
 import { Badge } from '@/components/ui/badge';
@@ -54,6 +55,50 @@ export function ChartPanel({
             </Badge>
           )}
           <RangeSelector value={selectedRange} onValueChange={onRangeChange} />
+          <div
+            className="flex h-11 items-center rounded-2xl bg-secondary p-1"
+            aria-label="Chart type preview"
+          >
+            <span
+              className="flex size-9 items-center justify-center rounded-[14px] bg-card shadow-sm"
+              aria-label="Line chart selected"
+            >
+              <Image
+                src="/assets/chart-controls/wave-triangle.svg"
+                alt=""
+                width={20}
+                height={20}
+                className="size-5"
+                aria-hidden="true"
+              />
+            </span>
+            <span
+              className="flex size-9 items-center justify-center text-muted-foreground"
+              aria-label="Candlestick chart unavailable"
+            >
+              <Image
+                src="/assets/chart-controls/chart-candle.svg"
+                alt=""
+                width={20}
+                height={20}
+                className="size-5 opacity-40"
+                aria-hidden="true"
+              />
+            </span>
+          </div>
+          <span
+            className="flex size-11 items-center justify-center rounded-[14px] bg-secondary text-muted-foreground"
+            aria-label="Percentage scale preview"
+          >
+            <Image
+              src="/assets/chart-controls/chart-01.svg"
+              alt=""
+              width={20}
+              height={20}
+              className="size-5 opacity-40"
+              aria-hidden="true"
+            />
+          </span>
         </div>
       </div>
 
