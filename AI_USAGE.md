@@ -34,6 +34,8 @@ The next Playwright milestone extended the same typed boundary fixtures with ran
 
 The final Playwright milestone added per-resource failure counts, malformed and empty payloads, unknown-token responses, and scoped retries. I checked both routes at three desktop widths, keyboard focus and activation, reduced motion, and Axe results. During the first focused run, I separated expected HTTP console noise from unexpected runtime errors and observed that Radix arrow keys move radio focus without activating the selection. I also found two Token Details accessibility defects. I made the chart library's decorative subtree inert, replaced prohibited labels on plain elements with semantic screen-reader text or image roles, and reran the complete suite.
 
+A final traceability audit found that the design brief's two Token Details loading states lacked direct browser assertions. I added semantic busy regions to the initial skeleton and two tests: one measures the chart/stats and trading-rail skeleton geometry, and one verifies that a range refetch retains the prior chart and stats while live text announces the pending range.
+
 Each milestone ended with focused checks, a diff audit, and a commit. I kept the user-owned `.gitignore` edit out of the cleanup commit.
 
 ## Accepted decisions
@@ -122,5 +124,7 @@ The first Playwright milestone passed 5 Chromium tests against the optimized pro
 The Token Details milestone added 5 Chromium tests. It covered headline identity and pricing, the accessible chart summary and rendered canvas, all grouped Stats sections, disabled swap/position/order controls, all seven range URLs, invalid-range correction while preserving sibling query state, last-choice-wins behavior under out-of-order responses, and one-request cache reuse when returning to a fresh range.
 
 The final Playwright milestone added 16 Chromium tests. Eight cover independent resource failures, retry recovery, empty and malformed responses, and unknown-token handling. Three run both routes at 1728x1117, 1280x900, and 1024x1117 and assert containment. The remaining tests cover keyboard focus and activation, reduced motion, and zero Axe violations on Explore, Token Details, and the unknown-token state. The focused milestone passed 16/16, and the complete production-browser suite passed 26/26.
+
+The loading-state audit added two Token Details tests. The focused Token Details file passed 7/7 tests. The final production-browser suite passed 28/28.
 
 One verification caveat: `pnpm web:build` now runs `next build --webpack` in `apps/web-starter/package.json`. The direct Turbopack build path failed in this sandbox because it could not create or bind an internal worker port.

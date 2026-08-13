@@ -3,6 +3,38 @@ import { mockTokenDetailsApi } from './fixtures/market-api';
 import { test, expect } from './fixtures/test';
 
 test.describe('Token Details', () => {
+  test('shows stable full-page loading geometry before token details resolve', async ({
+    page,
+  }) => {
+    await mockTokenDetailsApi(page, 'alpha-token', { detailDelayMs: 800 });
+    await page.goto('/tokens/alpha-token?range=24h');
+
+    const loading = page.getByRole('main', { name: 'Loading token details' });
+    const content = page.getByRole('region', {
+      name: 'Token chart and statistics loading',
+    });
+    const rail = page.getByRole('complementary', {
+      name: 'Trading preview loading',
+    });
+    await expect(loading).toHaveAttribute('aria-busy', 'true');
+    await expect(content).toBeVisible();
+    await expect(rail).toBeVisible();
+
+    const contentBox = await content.boundingBox();
+    const railBox = await rail.boundingBox();
+    if (!contentBox || !railBox) {
+      throw new Error('Expected loading content and rail geometry');
+    }
+    expect(contentBox.height).toBeGreaterThan(1_600);
+    expect(railBox.height).toBeGreaterThan(1_100);
+    expect(contentBox.x + contentBox.width).toBeLessThanOrEqual(railBox.x);
+
+    await expect(
+      page.getByRole('heading', { name: 'Alpha Token', level: 1 }),
+    ).toBeVisible();
+    await expect(loading).toBeHidden();
+  });
+
   test('renders headline data, chart, stats, and static trading controls', async ({
     page,
   }) => {
@@ -148,6 +180,48 @@ test.describe('Token Details', () => {
     await expect(
       page.getByRole('heading', { name: 'Highlights (1Y)' }),
     ).toBeVisible();
+  });
+
+  test('retains prior chart and stats while a new range loads', async ({
+    page,
+  }) => {
+    await mockTokenDetailsApi(page, 'alpha-token', {
+      historyDelayMs: { '7d': 800 },
+      statsDelayMs: { '7d': 800 },
+    });
+    await page.goto('/tokens/alpha-token?range=24h');
+
+    const chartSection = page.getByRole('region', { name: 'Price history' });
+    const statsSection = page.getByRole('region', {
+      name: 'Token statistics',
+    });
+    await expect(page.getByRole('figure')).toHaveAccessibleName(
+      /ALPHA 24H price chart in UTC/,
+    );
+    await expect(
+      page.getByRole('heading', { name: 'Highlights (24H)' }),
+    ).toBeVisible();
+
+    await page.getByRole('radio', { name: '7D price range' }).click();
+    await expect(chartSection).toHaveAttribute('aria-busy', 'true');
+    await expect(statsSection).toHaveAttribute('aria-busy', 'true');
+    await expect(page.getByText('Updating to 7D')).toBeVisible();
+    await expect(page.getByText('Updating stats to 7D')).toBeVisible();
+    await expect(page.getByRole('figure')).toHaveAccessibleName(
+      /ALPHA 24H price chart in UTC/,
+    );
+    await expect(
+      page.getByRole('heading', { name: 'Highlights (24H)' }),
+    ).toBeVisible();
+
+    await expect(page.getByRole('figure')).toHaveAccessibleName(
+      /ALPHA 7D price chart in UTC/,
+    );
+    await expect(
+      page.getByRole('heading', { name: 'Highlights (7D)' }),
+    ).toBeVisible();
+    await expect(chartSection).toHaveAttribute('aria-busy', 'false');
+    await expect(statsSection).toHaveAttribute('aria-busy', 'false');
   });
 
   test('reuses fresh cached history and stats when returning to a range', async ({

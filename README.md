@@ -111,7 +111,7 @@ The app targets desktop widths. At narrow desktop widths, the table scrolls insi
 
 Vitest covers boundary normalization, API error classification, formatting, range parsing, stable sorting, chart summaries, flat price domains, missing market values, range selection, table semantics, keyboard table scrolling, and disabled trading controls.
 
-Playwright runs against an optimized Next production build with deterministic browser-level API fixtures. The 26-test Chromium suite covers all 250 Explore rows, required columns and market metrics, sorting in both directions with URL persistence, keyboard table scrolling, row action semantics, token-detail navigation, and loading geometry. Token Details coverage includes the headline, chart, grouped stats, disabled trading rail, all seven URL-backed ranges, invalid-range normalization, out-of-order response safety, and fresh-range cache reuse.
+Playwright runs against an optimized Next production build with deterministic browser-level API fixtures. The 28-test Chromium suite covers all 250 Explore rows, required columns and market metrics, sorting in both directions with URL persistence, keyboard table scrolling, row action semantics, token-detail navigation, and loading geometry. Token Details coverage includes the full-page loading skeleton, retained chart and stats during range updates, the headline, chart, grouped stats, disabled trading rail, all seven URL-backed ranges, invalid-range normalization, out-of-order response safety, and fresh-range cache reuse.
 
 Resilience coverage verifies independent summary, token-list, history, and stats failures; local retry recovery; empty and malformed lists; empty history; and unknown-token handling. Layout checks exercise both routes at 1728x1117, 1280x900, and 1024x1117, assert no document overflow, and ensure the chart and rail do not overlap. Keyboard coverage includes skip navigation, sorting, range focus and activation, and reduced motion. `@axe-core/playwright` scans Explore, Token Details, and the unknown-token state against WCAG 2.0/2.1 A and AA rules. Every test fails on uncaught page errors and unexpected console errors. Failure artifacts are written to `apps/web-starter/test-results`; the HTML report is written to `apps/web-starter/playwright-report`.
 
@@ -128,7 +128,7 @@ pnpm web:e2e
 pnpm exec next build --webpack
 ```
 
-The web test suite passed with 32 Vitest tests across 12 files. Playwright passed all 26 Chromium tests against the optimized production build.
+The web test suite passed with 32 Vitest tests across 12 files. Playwright passed all 28 Chromium tests against the optimized production build.
 
 Production browser checks covered:
 
