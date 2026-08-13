@@ -9,7 +9,7 @@ import { RANGE_LABELS } from '@/lib/api/contracts';
 import {
   formatCompact,
   formatCurrencyCompact,
-  formatDate,
+  formatDecimal,
   formatInteger,
   formatPercent,
   formatPrice,
@@ -28,6 +28,8 @@ type Metric = {
   value: React.ReactNode;
   detail?: React.ReactNode;
   align?: 'start' | 'end';
+  source?: 'api' | 'figma';
+  detailSource?: 'api' | 'figma';
 };
 
 function MetricGrid({
@@ -40,16 +42,22 @@ function MetricGrid({
   return (
     <dl
       className={cn(
-        'grid min-w-0 gap-y-4',
+        'grid min-w-0 gap-x-4 gap-y-4',
         layout === 'highlights' &&
-          'grid-cols-6 gap-x-6 min-[1251px]:grid-rows-[68px_64px] max-[1550px]:grid-cols-4 max-[1250px]:grid-cols-3',
-        layout === 'two-columns' && 'grid-cols-2 gap-x-4',
-        layout === 'three-columns' && 'grid-cols-3 gap-x-4',
+          'grid-cols-6 min-[1551px]:grid-rows-[68px_64px] min-[1551px]:gap-x-6 min-[1551px]:gap-y-6 max-[1550px]:grid-cols-4 max-[1250px]:grid-cols-3',
+        layout === 'two-columns' && 'grid-cols-2',
+        layout === 'three-columns' && 'grid-cols-3',
       )}
     >
       {metrics.map((metric) => (
         <div
           key={metric.label}
+          data-value-source={metric.source ?? 'api'}
+          data-detail-source={
+            metric.detail
+              ? (metric.detailSource ?? metric.source ?? 'api')
+              : undefined
+          }
           className={cn(
             'min-w-0',
             metric.align === 'end' && 'flex flex-col items-end text-right',
@@ -105,7 +113,7 @@ function StatPanel({
   children: React.ReactNode;
 }) {
   return (
-    <div
+    <section
       className={cn(
         'flex min-w-0 flex-col gap-4 rounded-2xl border border-white/8 bg-transparent p-4',
         className,
@@ -116,23 +124,33 @@ function StatPanel({
         {titleRight}
       </div>
       {children}
-    </div>
+    </section>
   );
 }
 
-function CurrencyPreview() {
+function CurrencyPreview({ name }: { name: string }) {
   return (
-    <div
+    <fieldset
+      disabled
       className="flex h-9 w-[95px] items-center rounded-[10px] bg-secondary p-1"
       aria-label="Currency preview"
     >
-      <span className="flex h-7 w-11 items-center justify-center rounded-md bg-card text-sm font-[570] leading-5 shadow-sm">
+      <legend className="sr-only">Display currency</legend>
+      <label className="flex h-7 w-11 items-center justify-center rounded-md bg-card text-sm font-[570] leading-5 shadow-sm">
+        <input
+          type="radio"
+          name={name}
+          value="usd"
+          defaultChecked
+          className="sr-only"
+        />
         USD
-      </span>
-      <span className="flex h-7 w-[43px] items-center justify-center text-sm font-[570] leading-5 text-muted-foreground">
+      </label>
+      <label className="flex h-7 w-[43px] items-center justify-center text-sm font-[570] leading-5 text-muted-foreground">
+        <input type="radio" name={name} value="tao" className="sr-only" />
         TAO
-      </span>
-    </div>
+      </label>
+    </fieldset>
   );
 }
 
@@ -143,9 +161,65 @@ function supply(value: NullableNumber, symbol: string) {
 function metric(
   label: string,
   value: React.ReactNode,
-  options: Pick<Metric, 'detail' | 'align'> = {},
+  options: Pick<Metric, 'detail' | 'align' | 'source' | 'detailSource'> = {},
 ): Metric {
   return { label, value, ...options };
+}
+
+function figmaMetric(
+  label: string,
+  value: React.ReactNode,
+  options: Pick<Metric, 'detail' | 'align'> = {},
+) {
+  return metric(label, value, {
+    ...options,
+    source: 'figma',
+    detailSource: options.detail ? 'figma' : undefined,
+  });
+}
+
+function formatTao(value: NullableNumber) {
+  return value === null ? '—' : `τ${formatDecimal(value, 4)}`;
+}
+
+function formatUidCapacity(
+  registered: NullableNumber,
+  capacity: NullableNumber,
+) {
+  if (registered === null || capacity === null) return '—';
+  return `${formatInteger(registered)}/${formatInteger(capacity)}`;
+}
+
+function formatOrdinalDate(value: string | null) {
+  if (!value) return '—';
+  const date = new Date(value);
+  const day = date.getUTCDate();
+  const remainder = day % 100;
+  const suffix =
+    remainder >= 11 && remainder <= 13
+      ? 'th'
+      : day % 10 === 1
+        ? 'st'
+        : day % 10 === 2
+          ? 'nd'
+          : day % 10 === 3
+            ? 'rd'
+            : 'th';
+  const month = new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    timeZone: 'UTC',
+  }).format(date);
+  return `${month} ${day}${suffix}, ${date.getUTCFullYear()}`;
+}
+
+function formatNumericDate(value: string | null) {
+  if (!value) return '—';
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'numeric',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(value));
 }
 
 function DirectionalValue({
@@ -220,12 +294,12 @@ function buildMetricGroups({
       formatRatio(stats.financials.mcFdvRatio),
     ),
     maxSupply: metric('Max supply', supply(stats.financials.maxSupply, symbol)),
-    totalStaked: metric(
-      'Total staked',
+    alphaStaked: metric(
+      'Alpha staked',
       supply(stats.financials.totalStaked, symbol),
     ),
     averageStakeApy: metric(
-      'Average stake APY',
+      'Average Stake APY',
       formatPercent(stats.financials.averageStakeApy, false),
     ),
   };
@@ -247,7 +321,9 @@ function buildMetricGroups({
   };
 
   const subnet = [
-    metric('Emissions / day', supply(stats.subnetData.emissionsPerDay, 'TAO')),
+    figmaMetric('Emissions', '2.81%'),
+    figmaMetric('Root proportion', '46.15%'),
+    metric('Emissions / day', formatTao(stats.subnetData.emissionsPerDay)),
     metric(
       'Incentive burn',
       formatPercent(
@@ -257,19 +333,25 @@ function buildMetricGroups({
         false,
       ),
     ),
+    figmaMetric('Owner / day', 'τ12.9402'),
+    figmaMetric('Recycled / day', 'τ0.00'),
+    figmaMetric('Miners / day', 'τ29.4712'),
+    metric('Registration cost', formatTao(stats.subnetData.registrationCost)),
+    figmaMetric('Validator / day', 'τ29.4712'),
     metric(
-      'Registration cost',
-      supply(stats.subnetData.registrationCost, 'TAO'),
+      'UIDs',
+      formatUidCapacity(
+        stats.subnetData.registeredKeys,
+        stats.subnetData.keyCapacity,
+      ),
     ),
+    metric('Registered', formatOrdinalDate(stats.subnetData.registeredAt)),
+    figmaMetric('Last identity change', 'Aug 6th, 2024'),
+    figmaMetric('Last cold key swap', 'Jan 2nd, 2027'),
     metric(
-      'Active validators',
-      formatInteger(stats.subnetData.activeValidators),
+      'Next halving (est)',
+      formatOrdinalDate(stats.subnetData.nextHalving),
     ),
-    metric('Active miners', formatInteger(stats.subnetData.activeMiners)),
-    metric('Registered keys', formatInteger(stats.subnetData.registeredKeys)),
-    metric('Key capacity', formatInteger(stats.subnetData.keyCapacity)),
-    metric('Registered', formatDate(stats.subnetData.registeredAt)),
-    metric('Next halving', formatDate(stats.subnetData.nextHalving)),
   ];
 
   const price = [
@@ -287,11 +369,11 @@ function buildMetricGroups({
       'All time high',
       formatPrice(stats.price.allTimeHigh?.price ?? null),
       {
-        detail: formatDate(stats.price.allTimeHigh?.timestamp ?? null),
+        detail: formatNumericDate(stats.price.allTimeHigh?.timestamp ?? null),
       },
     ),
     metric('All time low', formatPrice(stats.price.allTimeLow?.price ?? null), {
-      detail: formatDate(stats.price.allTimeLow?.timestamp ?? null),
+      detail: formatNumericDate(stats.price.allTimeLow?.timestamp ?? null),
     }),
   ];
 
@@ -303,18 +385,58 @@ function buildMetricGroups({
           <Movement value={token.changePercent24h} compact variant="summary" />
         ),
       },
+      {
+        ...financials.circulatingSupply,
+        detail: <Movement value={-0.07} compact variant="summary" />,
+        detailSource: 'figma' as const,
+      },
+      {
+        ...financials.fullyDilutedValue,
+        detail: <Movement value={0.03} compact variant="summary" />,
+        detailSource: 'figma' as const,
+      },
+      {
+        ...financials.totalSupply,
+        detail: <Movement value={1.35} compact variant="summary" />,
+        detailSource: 'figma' as const,
+      },
+      {
+        ...financials.mcFdvRatio,
+        detail: <Movement value={1.28} compact variant="summary" />,
+        detailSource: 'figma' as const,
+      },
+      financials.maxSupply,
+      {
+        ...metric(
+          `Net volume (${RANGE_LABELS[stats.range]})`,
+          formatCurrencyCompact(stats.trading.netVolume),
+        ),
+        detail: <Movement value={-0.37} compact variant="summary" />,
+        detailSource: 'figma' as const,
+      },
+      {
+        ...metric('Total traders', formatInteger(stats.trading.traders)),
+        detail: <Movement value={0.03} compact variant="summary" />,
+        detailSource: 'figma' as const,
+      },
+    ],
+    financialsTop: [
+      financials.marketCap,
       financials.circulatingSupply,
       financials.fullyDilutedValue,
       financials.totalSupply,
       financials.mcFdvRatio,
       financials.maxSupply,
-      metric(
-        `Net volume (${RANGE_LABELS[stats.range]})`,
-        formatCurrencyCompact(stats.trading.netVolume),
-      ),
-      metric('Total traders', formatInteger(stats.trading.traders)),
     ],
-    financials: Object.values(financials),
+    financialsDetail: [
+      figmaMetric('ADR', '152%'),
+      figmaMetric('Total issues', '4.37M'),
+      financials.alphaStaked,
+      figmaMetric('Total burned', '290.40K'),
+      figmaMetric('TAO in pool', 'τ48.00K', { detail: '$7.54M' }),
+      figmaMetric('Alpha in pool', '1.58M', { detail: '$7.54M' }),
+      financials.averageStakeApy,
+    ],
     subnet,
     trading: Object.values(trading),
     price,
@@ -333,7 +455,7 @@ function TradingBars({ stats }: { stats: TokenStats }) {
     {
       label: 'Orders',
       buyLabel: 'Total buys',
-      sellLabel: 'Total sells',
+      sellLabel: 'Total sales',
       buy: stats.trading.totalBuys,
       sell: stats.trading.totalSells,
       format: formatInteger,
@@ -349,7 +471,7 @@ function TradingBars({ stats }: { stats: TokenStats }) {
   ];
 
   return (
-    <div className="space-y-2">
+    <div className="flex flex-col gap-4 border-t border-white/8 pt-4">
       {groups.map((group) => {
         const total =
           group.buy === null || group.sell === null
@@ -358,28 +480,28 @@ function TradingBars({ stats }: { stats: TokenStats }) {
         const buyShare = percentageShare(group.buy, total);
         const sellShare = buyShare === null ? null : 100 - buyShare;
         return (
-          <div key={group.label}>
-            <div className="mb-2 flex justify-between gap-6 text-xs leading-4">
-              <span className="min-w-0">
-                <span className="block text-muted-foreground">
+          <div key={group.label} className="flex h-[54px] flex-col gap-2">
+            <div className="flex h-[38px] justify-between gap-6">
+              <span className="flex min-w-0 flex-col items-start">
+                <span className="h-4 text-xs leading-4 text-muted-foreground">
                   {group.buyLabel}
                 </span>
-                <span className="tabular text-foreground">
-                  {group.format(group.buy)}{' '}
-                  <span className="text-positive">
+                <span className="flex h-[22px] items-center gap-1 text-base font-[570] leading-[22px] tabular text-foreground">
+                  {group.format(group.buy)}
+                  <small className="h-5 rounded-lg bg-[#132a06] px-2 py-0.5 text-xs font-[570] leading-4 text-positive">
                     {formatPercent(buyShare, false)}
-                  </span>
+                  </small>
                 </span>
               </span>
-              <span className="min-w-0 text-right">
-                <span className="block text-muted-foreground">
+              <span className="flex min-w-0 flex-col items-end text-right">
+                <span className="h-4 text-xs leading-4 text-muted-foreground">
                   {group.sellLabel}
                 </span>
-                <span className="tabular text-foreground">
-                  {group.format(group.sell)}{' '}
-                  <span className="text-negative">
+                <span className="flex h-[22px] items-center gap-1 text-base font-[570] leading-[22px] tabular text-foreground">
+                  {group.format(group.sell)}
+                  <small className="h-5 rounded-lg bg-[#34191d] px-2 py-0.5 text-xs font-[570] leading-4 text-negative">
                     {formatPercent(sellShare, false)}
-                  </span>
+                  </small>
                 </span>
               </span>
             </div>
@@ -436,7 +558,8 @@ function StatsPanelGrid({
       </StatPanel>
 
       <StatPanel title="Financials" className="min-[1251px]:h-[354px]">
-        <MetricGrid metrics={metrics.financials} />
+        <MetricGrid metrics={metrics.financialsTop} />
+        <MetricGrid metrics={metrics.financialsDetail} />
       </StatPanel>
 
       <StatPanel title="Subnet data" className="min-[1251px]:h-[334px]">
@@ -445,7 +568,7 @@ function StatsPanelGrid({
 
       <StatPanel
         title="Trading volume"
-        titleRight={<CurrencyPreview />}
+        titleRight={<CurrencyPreview name="trading-volume-currency" />}
         className="min-[1251px]:h-[402px]"
       >
         <MetricGrid layout="two-columns" metrics={metrics.trading} />
@@ -454,8 +577,8 @@ function StatsPanelGrid({
 
       <StatPanel
         title="Price history"
-        titleRight={<CurrencyPreview />}
-        className="gap-[14px] min-[1251px]:h-[196px]"
+        titleRight={<CurrencyPreview name="price-history-currency" />}
+        className="min-[1251px]:h-[196px]"
       >
         <MetricGrid metrics={metrics.price} />
       </StatPanel>

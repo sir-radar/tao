@@ -14,7 +14,7 @@ export function PriceHeader({ token }: { token: TokenDetail }) {
   return (
     <section
       aria-labelledby="token-title"
-      className="detail-page-width flex h-[140px] flex-col justify-between py-6"
+      className="detail-page-width flex h-[164px] flex-col gap-6 py-6"
     >
       <nav aria-label="Breadcrumb" className="flex h-5 items-center gap-1">
         <Link

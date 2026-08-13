@@ -179,6 +179,8 @@ export function TradingRail({
         </fieldset>
       </section>
 
+      <div className="h-[2px] w-full bg-white/8" aria-hidden="true" />
+
       <section
         aria-labelledby="position-title"
         className="flex h-[356px] flex-col gap-4 rounded-3xl bg-card p-6"

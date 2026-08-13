@@ -105,7 +105,7 @@ Token Details follows the Stats frame's 1920x2042 geometry:
 - 236px Highlights, 354px Financials, 334px Subnet data, 402px Trading volume, and 196px Price history blocks
 - 560px swap preview, 356px position preview, and 228px orders preview
 
-The grouped blocks render every usable value from the stats response. The implementation leaves out screenshot badges that would require made-up percentage changes. The position and orders rail remains disabled preview content.
+The grouped blocks keep API-backed market, supply, staking, trading, price, registration, and halving values live. The backend does not expose every field or comparison shown in the Stats frame, so design-only values such as ADR, pool balances, owner/recycled emissions, identity dates, and unsupported highlight deltas use the static Figma values supplied with the frame. These mixed-source leaves are marked with `data-value-source` in the DOM. All seven trend badges visible in the screenshot retain their supplied up/down assets. The position and orders rail remains disabled preview content.
 
 The app targets desktop widths. At narrow desktop widths, the table scrolls inside a labelled region and the detail rail moves below the chart at 900px. Mobile-specific navigation and trading layouts remain outside the brief.
 
@@ -155,6 +155,7 @@ The final automated pass repeated both routes at 1728x1117, 1280x900, and 1024x1
 - The fixed table viewport keeps the 1728px page and footer aligned with the reference while preserving every token through internal scrolling.
 - The repository lacks the exact Haffer font and per-token artwork.
 - Token Details uses a high-contrast initial mark in the frame's lime treatment instead of drawing subnet logos from the screenshot.
+- Design-only Stats values and unsupported trend deltas are static preview content; they do not change with the selected token or range. API-supported fields remain data-driven.
 - The chart sends the normalized `all` series to Lightweight Charts. The supplied 13,141-point response passed the production smoke test, but the app does not record render timing or switch to a 2,000-point extrema-preserving series.
 - Transactions, wallet connection, orders, transfers, portfolio data, and chart annotations stay outside scope.
 

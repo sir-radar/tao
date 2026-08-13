@@ -100,7 +100,7 @@ describe('StatsSections', () => {
 
     const tradingPanel = screen
       .getByRole('heading', { name: 'Trading volume' })
-      .closest('div.rounded-2xl');
+      .closest('section.rounded-2xl');
     expect(tradingPanel).not.toBeNull();
     expect(
       within(tradingPanel as HTMLElement)
@@ -116,13 +116,24 @@ describe('StatsSections', () => {
 
     const highlightsPanel = screen
       .getByRole('heading', { name: 'Highlights (24H)' })
-      .closest('div.rounded-2xl');
+      .closest('section.rounded-2xl');
     expect(
       within(highlightsPanel as HTMLElement)
         .getAllByText('Market cap')[0]
         .closest('div')
         ?.querySelector('dd'),
     ).toHaveClass('text-xl', 'leading-5');
+    expect(
+      highlightsPanel?.querySelectorAll('img[src*="market-arrow-up.svg"]'),
+    ).toHaveLength(5);
+    expect(
+      highlightsPanel?.querySelectorAll('img[src*="market-arrow-down.svg"]'),
+    ).toHaveLength(2);
+    expect(
+      within(highlightsPanel as HTMLElement)
+        .getByText('Circulating supply')
+        .closest('[data-detail-source]'),
+    ).toHaveAttribute('data-detail-source', 'figma');
     expect(
       within(tradingPanel as HTMLElement).getByText('Net volume'),
     ).toHaveClass('border-dashed');
@@ -131,9 +142,21 @@ describe('StatsSections', () => {
         .getByText('Net volume')
         .closest('div'),
     ).toHaveClass('items-end', 'text-right');
+    const currencyPreview = within(tradingPanel as HTMLElement).getByRole(
+      'group',
+      { name: 'Currency preview' },
+    );
+    expect(currencyPreview).toBeDisabled();
+    expect(currencyPreview).toHaveClass('h-9', 'w-[95px]');
+
     expect(
-      within(tradingPanel as HTMLElement).getByText('USD').parentElement,
-    ).toHaveClass('h-9', 'w-[95px]');
+      screen.getByText('ADR').closest('[data-value-source]'),
+    ).toHaveAttribute('data-value-source', 'figma');
+    expect(
+      screen.getByText('Alpha staked').closest('[data-value-source]'),
+    ).toHaveAttribute('data-value-source', 'api');
+    expect(screen.getByText('Last cold key swap')).toBeInTheDocument();
+    expect(screen.getByText('Total sales')).toBeInTheDocument();
 
     const volumeBar = screen.getByRole('img', {
       name: 'Volume: 60% buy and 40% sell',

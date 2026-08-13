@@ -4,7 +4,7 @@
 
 I used Codex to inspect the repository, plan the work, edit code, run checks, and control the local production app in a browser. I split the implementation into repository setup, Explore, Token Details, resilience, documentation, and cleanup passes. The repository's `AGENTS.md` required a review pause after each milestone.
 
-The Figma design-context workflow attempted to read file `ShGOnid4sBkwGybMICX0qh`, nodes `5:678`, `5:2035`, and `5:4313`. The connected identity lacked editor access, so the workflow stopped after the file-level error. The Stats request returned debug UUID `22c5e20b-1330-46e9-a4d0-2febe270ff71`; a later Explore-only precision pass retried `5:678` after authentication and received the same editor-access blocker with debug UUID `62cdafe7-98bc-4e6c-b457-570b0d2c83aa`. The condensed follow-up retried `5:2035` and received debug UUID `43c46d71-3852-46b5-a315-826bb8268163`. I inspected the supplied PNG and CSS exports plus the TAO logo, movement, control, token-link, and trading SVGs instead and recorded the access gap in the README.
+The Figma design-context workflow attempted to read file `ShGOnid4sBkwGybMICX0qh`, nodes `5:678`, `5:2035`, and `5:4313`. The connected identity lacked editor access, so the workflow stopped after the file-level error. The initial Stats request returned debug UUID `22c5e20b-1330-46e9-a4d0-2febe270ff71`; the later Stats precision pass received the same blocker with debug UUID `1955aedc-f335-426b-9678-9198b639dcb9`. A later Explore-only precision pass retried `5:678` after authentication and received debug UUID `62cdafe7-98bc-4e6c-b457-570b0d2c83aa`. The condensed follow-up retried `5:2035` and received debug UUID `43c46d71-3852-46b5-a315-826bb8268163`. I inspected the supplied PNG and CSS exports plus the TAO logo, movement, control, token-link, and trading SVGs instead and recorded the access gap in the README.
 
 The frontend-design and frontend-skill guidance shaped the dense exchange layout, visual hierarchy, responsive composition, and decision to keep the market surface flat. The stop-slop skill guided the documentation edit.
 
@@ -32,6 +32,8 @@ For the icon updates, I compared SHA-256 hashes before and after adding the six 
 
 For Token Details, I mapped the 1920x2042 export into the 164px token band, 1322px workspace, 430px rail, chart controls, grouped stats, and disabled trade previews. I kept query caching, stale-request cancellation, partial errors, URL-backed ranges, and backend normalization. The browser exposed a missing keyboard activation path on the range controls, so I added Enter and Space handling plus a component test.
 
+The later Stats precision pass reconciled the 18,690-line CSS export with the new screenshot and the running page. It moved the divider to the bottom of the exported 164px token band, restored the Highlights row gap, split Financials into the Figma's 92px and 166px groups, filled the five-row Subnet grid, rebuilt Trading volume around the exported divider and 54px comparison rows, and inserted the missing rail divider. The user clarified that API-supported leaves should remain live while design-only leaves may use static Figma values. I applied that boundary explicitly and marked each static leaf in the DOM rather than converting the whole page into screenshot data.
+
 For the cleanup pass, I accepted Fallow's 12-item export preview after its traces showed no external references. I removed the unused component bodies and three unreachable files by hand. I also consolidated duplicate list/history normalization into one keyed-item helper and moved shared history/stats query options into one hook.
 
 For the Playwright pass, I started with the runner and Explore route as one reviewable unit. I generated 250 deterministic token rows, exercised the optimized production server, and used the first failing browser run to refine locators against Chromium's computed accessibility names. I preserved the unrelated generated `next-env.d.ts` change throughout.
@@ -54,6 +56,7 @@ Each milestone ended with focused checks, a diff audit, and a commit. I kept the
 - I kept URL-backed sorting, accessible row links, a closed-by-default row menu, 100px condensed numeric columns, 122.22px default columns, and the exported Token Details geometry.
 - I kept the Explore and Token Details header actions route-aware: Explore uses the exported 122px Download control while Token Details retains its 133px “Get the app” control.
 - I kept range-specific API data across highlights, financials, subnet data, trading volume, and price history.
+- I kept API values for every Stats field the backend exposes and used static Figma values only for unsupported design fields and trend deltas. This restored the complete frame without replacing real market data.
 - I accepted Fallow's traced removal of unused UI primitives, export markers, and formatting helpers.
 - I added shared normalization and range-query helpers for the two meaningful semantic duplicate groups.
 - I kept Playwright API mocks at the browser boundary so tests cover the application transport and normalization layers without inheriting the backend's intentional jitter and intermittent history failure.
@@ -68,7 +71,7 @@ Each milestone ended with focused checks, a diff audit, and a commit. I kept the
 - I rewrote generated styling around the supplied screenshots: tighter radii, muted purple surfaces, thin borders, tabular numbers, and restrained green and red movement cues.
 - I replaced the first 1680px max-width pass with the CSS export's 1728px frame and 64px gutters after browser measurements showed the mismatch.
 - I kept backend-driven market values instead of copying placeholder numbers from the screenshot.
-- I omitted screenshot trend badges when the API did not supply a matching percentage change.
+- I initially omitted screenshot trend badges when the API did not supply a matching percentage change. After the user clarified the desired source boundary, I restored all seven shown badges with static Figma deltas where no API delta exists while keeping the supported market-cap change live.
 - I kept market-cap sorting even though synthetic filler tokens can outrank the featured ten. Reordering the result would make the active sort label inaccurate.
 - I rejected generated token and subnet artwork plus unprovided brand marks because I could not retrieve those Figma assets. I kept the supplied TAO logo and SVG assets for market controls, token links, and the trading rail.
 - I rejected TanStack Table, Zod, a second icon package, animation packages, wallet behavior, and functional trading controls. None reduced P0 risk enough to justify the added surface.
@@ -99,6 +102,8 @@ pnpm web:e2e
 ```
 
 The implementation web suite contained 32 tests across 12 files. It checked tolerant decoders, stable sorting, URL range handling, number formatting, chart summaries, API error classification, missing metric behavior, keyboard table scrolling, range selection, and disabled trading semantics.
+
+The Stats precision pass reran backend tests, typecheck, and build; web lint, typecheck, all 32 Vitest tests, the production Webpack build, and all 29 Playwright tests. Browser measurements at 1920px matched the exported 164px token band, 1322px workspace, 430px rail, and 236/354/334/402/196px Stats panels. Additional checks at 1728x1117, 1280x900, and 1024x1117 reported no document overflow or chart/rail overlap. The first full Playwright run caught that naming each Stats card as a region made the chart's “Price history” landmark ambiguous; I kept semantic `<section>` elements but removed the redundant region names, then passed the focused regression and complete suite.
 
 Production browser checks covered:
 
