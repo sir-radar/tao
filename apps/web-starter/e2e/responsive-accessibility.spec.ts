@@ -49,6 +49,16 @@ for (const viewport of [
     ).toBeVisible();
     await expectNoDocumentOverflow(page);
 
+    const exploreTableBox = await page
+      .getByRole('region', { name: 'Token markets table' })
+      .boundingBox();
+    const exploreFooterBox = await page.locator('footer').boundingBox();
+    expect(exploreTableBox).not.toBeNull();
+    expect(exploreFooterBox).not.toBeNull();
+    expect(
+      exploreFooterBox!.y - (exploreTableBox!.y + exploreTableBox!.height),
+    ).toBeGreaterThanOrEqual(139);
+
     await page.goto('/tokens/alpha-token?range=24h');
     await expect(page.getByRole('figure')).toHaveAccessibleName(
       /ALPHA 24H price chart in UTC/,

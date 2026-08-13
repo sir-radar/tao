@@ -45,7 +45,7 @@ const marketViews: ReadonlyArray<{
 
 export function ExplorePage() {
   return (
-    <main id="main" className="page-width flex-1">
+    <main id="main" className="page-width min-h-[961px] flex-1">
       <h1 className="sr-only">Explore Tokens</h1>
       <MarketSummary />
 
