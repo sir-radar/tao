@@ -86,10 +86,10 @@ export function MarketSummary() {
           key={metric.label}
           className="h-[108px] gap-1 rounded-2xl border-0 p-4 shadow-none ring-0"
         >
-          <p className="h-5 text-sm leading-5 text-muted-foreground">
+          <p className="h-5 whitespace-nowrap text-sm font-[430] leading-5 text-muted-foreground">
             {metric.label}
           </p>
-          <p className="h-8 text-2xl leading-8 tracking-tight tabular">
+          <p className="h-8 text-2xl font-[430] leading-8 tracking-tight tabular">
             {metric.value}
           </p>
           <span className="flex h-5 items-center">

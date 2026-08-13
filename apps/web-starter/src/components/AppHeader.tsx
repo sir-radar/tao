@@ -33,7 +33,7 @@ export function AppHeader() {
           </Link>
           <nav
             aria-label="Primary"
-            className="flex h-[26px] items-center gap-2 text-lg font-medium"
+            className="flex h-[26px] items-center gap-2 text-lg font-[570] leading-[18px]"
           >
             <Link
               href="/"
@@ -67,7 +67,7 @@ export function AppHeader() {
 
         <div className="ml-auto flex items-center gap-4">
           <div
-            className="flex h-10 w-[270px] items-center gap-2.5 rounded-2xl bg-secondary px-4 text-sm text-muted-foreground max-[1260px]:size-9 max-[1260px]:justify-center max-[1260px]:border max-[1260px]:border-white/8 max-[1260px]:bg-black/20 max-[1260px]:px-0"
+            className="flex h-10 w-[270px] items-center gap-2.5 rounded-2xl bg-secondary px-4 text-sm font-[430] text-muted-foreground max-[1260px]:size-9 max-[1260px]:justify-center max-[1260px]:border max-[1260px]:border-white/8 max-[1260px]:bg-black/20 max-[1260px]:px-0"
             aria-label="Search preview"
             aria-disabled="true"
           >
@@ -78,7 +78,10 @@ export function AppHeader() {
             <button
               type="button"
               disabled
-              className="flex h-10 w-[133px] items-center justify-center rounded-[14px] border border-white/20 text-base font-medium text-foreground transition-colors hover:border-white/30 disabled:opacity-100"
+              className={cn(
+                'flex h-10 items-center justify-center rounded-[14px] border border-white/20 text-base font-[570] leading-[22px] text-foreground transition-colors hover:border-white/30 disabled:opacity-100',
+                detailView ? 'w-[133px]' : 'w-[122px]',
+              )}
             >
               {detailView ? 'Get the app' : 'Download'}
             </button>
@@ -94,7 +97,7 @@ export function AppHeader() {
               <button
                 type="button"
                 disabled
-                className="flex h-10 w-36 items-center justify-center gap-2 whitespace-nowrap rounded-[14px] bg-primary px-3 text-sm font-medium text-secondary disabled:opacity-100 max-[900px]:hidden"
+                className="flex h-10 w-36 items-center justify-center gap-2 whitespace-nowrap rounded-[14px] bg-primary px-3 text-sm font-[570] leading-5 text-secondary disabled:opacity-100 max-[900px]:hidden"
                 aria-label="Wallet preview: 1 wallet"
               >
                 <span

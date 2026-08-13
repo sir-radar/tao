@@ -148,7 +148,7 @@ function SwapPreview({ tokenName }: { tokenName: string }) {
     <button
       type="button"
       disabled
-      className="ml-auto flex h-9 w-24 items-center justify-center gap-2 rounded-[14px] bg-secondary py-2 pl-2 pr-4 text-sm font-medium text-foreground disabled:opacity-100"
+      className="ml-auto flex h-9 w-24 items-center justify-center gap-2 rounded-[14px] bg-secondary py-2 pl-2 pr-4 text-sm font-[570] leading-5 text-foreground disabled:opacity-100"
       aria-label={`Swap ${tokenName} preview`}
     >
       <span className="flex h-4 w-7 items-center" aria-hidden="true">
@@ -169,7 +169,7 @@ function RowMenu({ tokenName }: { tokenName: string }) {
     <div
       role="menu"
       aria-label={`Actions for ${tokenName}`}
-      className="absolute right-[-6px] top-[46px] z-50 h-[112px] w-[199px] rounded-lg border border-white/20 bg-card p-1 text-sm font-normal text-foreground shadow-md animate-in fade-in zoom-in-95 duration-100"
+      className="absolute right-[-6px] top-[46px] z-50 h-[112px] w-[199px] rounded-lg border border-white/20 bg-card p-1 text-sm font-[430] leading-5 text-foreground shadow-md animate-in fade-in zoom-in-95 duration-100"
     >
       <div className="flex flex-col p-1">
         <span
@@ -218,7 +218,7 @@ const TokenRow = memo(function TokenRow({
         <Link
           href={`/tokens/${encodeURIComponent(token.id)}`}
           prefetch={false}
-          className="flex min-w-0 items-center gap-3 rounded-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+          className="flex min-w-0 items-center gap-3 rounded-sm font-[570] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
         >
           <span
             className="flex size-6 shrink-0 items-center justify-center rounded-full border border-white/8 bg-secondary text-[10px] font-semibold text-foreground"
@@ -232,13 +232,13 @@ const TokenRow = memo(function TokenRow({
               className="size-1 shrink-0 rounded-full bg-white/20"
               aria-hidden="true"
             />
-            <span className="shrink-0 font-normal text-muted-foreground">
+            <span className="shrink-0 text-muted-foreground">
               {token.subnet}
             </span>
           </span>
         </Link>
       </TableCell>
-      <TableCell className="px-4 text-right font-medium tabular">
+      <TableCell className="px-4 text-right font-[570] tabular">
         {formatCurrencyCompact(token.marketCap)}
       </TableCell>
       <TableCell className="px-4 text-right text-muted-foreground tabular">
@@ -316,8 +316,8 @@ export function TokenTable({
 
   return (
     <Table
-      className="token-market-table table-fixed text-sm"
-      containerClassName="table-scrollbar-none h-[604px] rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      className="token-market-table table-fixed text-sm font-[570]"
+      containerClassName="table-scrollbar-none isolate h-[604px] rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
       containerProps={{
         role: 'region',
         'aria-label': 'Token markets table',
@@ -342,7 +342,7 @@ export function TokenTable({
       </colgroup>
       <TableHeader>
         <TableRow className="h-11 border-0 bg-card hover:bg-card">
-          <TableHead className="sticky left-0 top-0 z-40 h-11 rounded-l-xl border-r border-white/8 bg-card px-4 text-muted-foreground">
+          <TableHead className="sticky left-0 top-0 z-40 h-11 rounded-l-xl border-r border-white/8 bg-card px-4 font-[570] text-muted-foreground">
             Name
           </TableHead>
           {columns.map((column) => {
@@ -362,7 +362,7 @@ export function TokenTable({
                 <button
                   type="button"
                   aria-label={`Sort by ${column.label}`}
-                  className={`flex h-11 w-full items-center justify-end gap-1 px-4 font-medium transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring ${
+                  className={`flex h-11 w-full items-center justify-end gap-1 px-4 font-[570] transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring ${
                     active ? 'text-foreground' : 'text-muted-foreground'
                   }`}
                   onClick={() => onSort(column.key)}

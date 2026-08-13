@@ -4,7 +4,7 @@
 
 I used Codex to inspect the repository, plan the work, edit code, run checks, and control the local production app in a browser. I split the implementation into repository setup, Explore, Token Details, resilience, documentation, and cleanup passes. The repository's `AGENTS.md` required a review pause after each milestone.
 
-The Figma design-context workflow attempted to read file `ShGOnid4sBkwGybMICX0qh`, nodes `5:678`, `5:2035`, and `5:4313`. The connected identity lacked editor access, so the workflow stopped after the file-level error. The Stats request returned debug UUID `22c5e20b-1330-46e9-a4d0-2febe270ff71`. I inspected the supplied PNG and CSS exports plus the TAO logo, movement, control, token-link, and trading SVGs instead and recorded the access gap in the README.
+The Figma design-context workflow attempted to read file `ShGOnid4sBkwGybMICX0qh`, nodes `5:678`, `5:2035`, and `5:4313`. The connected identity lacked editor access, so the workflow stopped after the file-level error. The Stats request returned debug UUID `22c5e20b-1330-46e9-a4d0-2febe270ff71`; a later Explore-only precision pass retried `5:678` after authentication and received the same editor-access blocker with debug UUID `62cdafe7-98bc-4e6c-b457-570b0d2c83aa`. I inspected the supplied PNG and CSS exports plus the TAO logo, movement, control, token-link, and trading SVGs instead and recorded the access gap in the README.
 
 The frontend-design and frontend-skill guidance shaped the dense exchange layout, visual hierarchy, responsive composition, and decision to keep the market surface flat. The stop-slop skill guided the documentation edit.
 
@@ -21,6 +21,8 @@ After a browser extension injected attributes into the root elements, I added Re
 I read the briefs, package manifests, backend token generation, API normalization, current components, tests, workspace configuration, and Git state before editing. Backend response shapes and failure behavior drove the frontend contracts. The visual exports supplied layout evidence after Figma access failed.
 
 For Explore, I mapped the frame to the header, market band, view controls, table, menu, and footer. I corrected the condensed geometry while retaining API resilience, stable sorting, links, and all 250 rows.
+
+For the later Explore precision pass, I compared the running 1728x1117 page with the newly supplied screenshot and its 20,575-line CSS export. Browser measurements found that the shared Token Details header had widened Explore's Download button from 122px to 133px, shifting the complete search/action cluster 11px left. I restored route-specific button geometry, fixed the six market-tab widths and footer groups to the export, mapped the supplied 430/570 text weights to the Explore components, and prevented the long condensed market-ratio label from wrapping into its value. I kept the action menu closed by default and validated the screenshot's open-menu state after activating the fourth-row control instead of making an obstructive interaction state the page default.
 
 For the icon updates, I compared SHA-256 hashes before and after adding the six user-provided market-view SVGs and `Settings2.svg`. The hashes matched, so the repository copies preserve the supplied bytes.
 
@@ -46,6 +48,7 @@ Each milestone ended with focused checks, a diff audit, and a commit. I kept the
 - I kept a semantic table and custom comparator instead of adding TanStack Table. The API returns 250 rows and needs no filtering, pagination, selection, or column configuration.
 - I kept the 604px scroll region that shows ten rows at the 1728px reference while preserving all 250 rows.
 - I kept URL-backed sorting, accessible row links, a closed-by-default row menu, 100px condensed numeric columns, 122.22px default columns, and the exported Token Details geometry.
+- I kept the Explore and Token Details header actions route-aware: Explore uses the exported 122px Download control while Token Details retains its 133px “Get the app” control.
 - I kept range-specific API data across highlights, financials, subnet data, trading volume, and price history.
 - I accepted Fallow's traced removal of unused UI primitives, export markers, and formatting helpers.
 - I added shared normalization and range-query helpers for the two meaningful semantic duplicate groups.
@@ -126,5 +129,7 @@ The Token Details milestone added 5 Chromium tests. It covered headline identity
 The final Playwright milestone added 16 Chromium tests. Eight cover independent resource failures, retry recovery, empty and malformed responses, and unknown-token handling. Three run both routes at 1728x1117, 1280x900, and 1024x1117 and assert containment. The remaining tests cover keyboard focus and activation, reduced motion, and zero Axe violations on Explore, Token Details, and the unknown-token state. The focused milestone passed 16/16, and the complete production-browser suite passed 26/26.
 
 The loading-state audit added two Token Details tests. The focused Token Details file passed 7/7 tests. The final production-browser suite passed 28/28.
+
+The later Explore precision pass reran backend tests, typecheck, and build; web lint, typecheck, all 32 Vitest tests, the production build, and the complete 28-test Playwright suite. Direct browser measurements at 1728x1117 confirmed the exported 270px search field, 122px Download control, 144px wallet control, 699px market-view rail, 1600x140 summary band, 1600x604 table, and 199x112 activated row menu. Additional 1280x900 and 1024x1117 passes reported zero horizontal document overflow, console errors, page errors, or failed API responses.
 
 One verification caveat: `pnpm web:build` now runs `next build --webpack` in `apps/web-starter/package.json`. The direct Turbopack build path failed in this sandbox because it could not create or bind an internal worker port.

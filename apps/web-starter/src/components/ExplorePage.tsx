@@ -7,18 +7,40 @@ import { TokenTableSkeleton } from './TokenTable';
 const marketViews: ReadonlyArray<{
   label: string;
   iconSrc: string;
+  widthClass: string;
   current?: boolean;
 }> = [
   {
     label: 'Top',
     iconSrc: '/assets/market-views/champion.svg',
+    widthClass: 'w-[70px]',
     current: true,
   },
-  { label: 'Watchlist', iconSrc: '/assets/market-views/star.svg' },
-  { label: 'Popular', iconSrc: '/assets/market-views/chart-01.svg' },
-  { label: 'Gainers', iconSrc: '/assets/market-views/chart-up.svg' },
-  { label: 'Losers', iconSrc: '/assets/market-views/chart-down.svg' },
-  { label: 'All Subnets', iconSrc: '/assets/market-views/profile.svg' },
+  {
+    label: 'Watchlist',
+    iconSrc: '/assets/market-views/star.svg',
+    widthClass: 'w-[117px]',
+  },
+  {
+    label: 'Popular',
+    iconSrc: '/assets/market-views/chart-01.svg',
+    widthClass: 'w-[104px]',
+  },
+  {
+    label: 'Gainers',
+    iconSrc: '/assets/market-views/chart-up.svg',
+    widthClass: 'w-[103px]',
+  },
+  {
+    label: 'Losers',
+    iconSrc: '/assets/market-views/chart-down.svg',
+    widthClass: 'w-[93px]',
+  },
+  {
+    label: 'All Subnets',
+    iconSrc: '/assets/market-views/profile.svg',
+    widthClass: 'w-[132px]',
+  },
 ];
 
 export function ExplorePage() {
@@ -33,11 +55,11 @@ export function ExplorePage() {
           className="thin-scrollbar min-w-0 overflow-x-auto"
           tabIndex={0}
         >
-          <ul className="flex h-[46px] items-stretch gap-4 text-lg font-medium text-muted-foreground">
-            {marketViews.map(({ label, iconSrc, current }) => (
+          <ul className="flex h-[46px] items-stretch gap-4 text-lg font-[570] leading-[26px] text-muted-foreground">
+            {marketViews.map(({ label, iconSrc, widthClass, current }) => (
               <li
                 key={label}
-                className={`flex h-[46px] shrink-0 items-center justify-center gap-2 px-2 py-2.5 ${
+                className={`flex h-[46px] shrink-0 items-center justify-center gap-2 whitespace-nowrap px-2 py-2.5 ${widthClass} ${
                   current ? 'border-b-[3px] border-primary text-foreground' : ''
                 }`}
                 aria-current={current ? 'page' : undefined}
@@ -73,7 +95,7 @@ export function ExplorePage() {
             />
           </button>
           <div
-            className="flex h-11 w-[127px] rounded-2xl bg-secondary p-1 text-sm font-medium"
+            className="flex h-11 w-[127px] rounded-2xl bg-secondary p-1 text-sm font-[570] leading-5"
             aria-label="Currency display: USD"
           >
             <span className="flex h-9 w-[60px] items-center justify-center rounded-[14px] bg-card text-foreground shadow-sm">
