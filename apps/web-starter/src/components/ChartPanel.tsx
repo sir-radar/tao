@@ -19,10 +19,8 @@ function FeaturedPrice({ value }: { value: number | null }) {
   const hasCurrency = whole.startsWith('$');
 
   return (
-    <p
-      className="flex h-12 items-baseline gap-0.5 tabular"
-      aria-label={`Current price: ${formatted}`}
-    >
+    <p className="flex h-12 items-baseline gap-0.5 tabular">
+      <span className="sr-only">Current price: {formatted}</span>
       {hasCurrency && (
         <span
           data-slot="price-currency"
@@ -110,6 +108,7 @@ export function ChartPanel({
           >
             <span
               className="flex size-9 items-center justify-center rounded-[14px] bg-card shadow-sm"
+              role="img"
               aria-label="Line chart selected"
             >
               <Image
@@ -123,6 +122,7 @@ export function ChartPanel({
             </span>
             <span
               className="flex size-9 items-center justify-center text-muted-foreground"
+              role="img"
               aria-label="Candlestick chart unavailable"
             >
               <Image
@@ -137,6 +137,7 @@ export function ChartPanel({
           </div>
           <span
             className="flex size-11 items-center justify-center rounded-[14px] bg-secondary text-muted-foreground"
+            role="img"
             aria-label="Percentage scale preview"
           >
             <Image

@@ -12,7 +12,7 @@ Browser control exercised the running app, route states, keyboard behavior, requ
 
 I used Fallow 3.14.0 for a frontend-only static cleanup pass. Its dead-code graph found three unreachable UI files and 19 unused exports. I used its dry-run fixer and trace commands before changing code, then compared mild and semantic duplicate reports before and after cleanup.
 
-I added Playwright 1.57 for production-build end-to-end coverage. Browser-level route interception supplies typed, deterministic API fixtures while preserving the real Next.js routes, React rendering, TanStack Query behavior, URL state, keyboard interaction, and accessibility tree. The initial suite also records screenshots, video, traces, and uncaught browser errors when a test fails.
+I added Playwright 1.57 for production-build end-to-end coverage. Browser-level route interception supplies typed, deterministic API fixtures while preserving the real Next.js routes, React rendering, TanStack Query behavior, URL state, keyboard interaction, and accessibility tree. The suite records screenshots, video, traces, and uncaught browser errors when a test fails. I added `@axe-core/playwright` 4.11.0 to scan representative success and error states against WCAG 2.0/2.1 A and AA rules.
 
 After a browser extension injected attributes into the root elements, I added React's `suppressHydrationWarning` to `<html>` and `<body>` to prevent extension-only hydration warnings without changing application behavior.
 
@@ -32,6 +32,8 @@ For the Playwright pass, I started with the runner and Explore route as one revi
 
 The next Playwright milestone extended the same typed boundary fixtures with range-specific delays and request observation. I used those controls to prove that a slower abandoned range cannot replace the final selection and that revisiting a fresh range reuses both cached history and cached stats. Browser failures also corrected two test-only assumptions: Lightweight Charts uses multiple canvas layers, and the visible Stats heading shares its name with the chart's screen-reader heading.
 
+The final Playwright milestone added per-resource failure counts, malformed and empty payloads, unknown-token responses, and scoped retries. I checked both routes at three desktop widths, keyboard focus and activation, reduced motion, and Axe results. During the first focused run, I separated expected HTTP console noise from unexpected runtime errors and observed that Radix arrow keys move radio focus without activating the selection. I also found two Token Details accessibility defects. I made the chart library's decorative subtree inert, replaced prohibited labels on plain elements with semantic screen-reader text or image roles, and reran the complete suite.
+
 Each milestone ended with focused checks, a diff audit, and a commit. I kept the user-owned `.gitignore` edit out of the cleanup commit.
 
 ## Accepted decisions
@@ -47,6 +49,8 @@ Each milestone ended with focused checks, a diff audit, and a commit. I kept the
 - I added shared normalization and range-query helpers for the two meaningful semantic duplicate groups.
 - I kept Playwright API mocks at the browser boundary so tests cover the application transport and normalization layers without inheriting the backend's intentional jitter and intermittent history failure.
 - I run Playwright against `next build --webpack` and `next start`, matching the documented production path instead of relying on development-server behavior.
+- I scope the runtime-error fixture's HTTP failure allowance to resilience tests that return 404 or 503 responses; happy-path tests still fail on every console error.
+- I kept automated accessibility checks focused on representative pages and paired them with explicit keyboard, focus, reduced-motion, overflow, and landmark assertions.
 
 ## Reworked or rejected suggestions
 
@@ -63,6 +67,8 @@ Each milestone ended with focused checks, a diff audit, and a commit. I kept the
 - I kept repeated numeric fields explicit in the API contracts. Type intersections would shorten the file but make each response shape harder to audit against the backend.
 - The initial build used Next 16's Turbopack default. It failed because this sandbox denied an internal worker port. I changed the package build script to `next build --webpack` after the same production build passed with Webpack.
 - I rewrote the first Playwright sortable-header locators. Exact column-header names did not account for the nested button's accessible label, so the final tests target the public “Sort by …” button name and locate its owning header for `aria-sort` assertions.
+- I rewrote the first range keyboard assertion after the browser showed the component's deliberate interaction model: arrow keys move focus and Enter or Space commits the URL-backed range.
+- I did not suppress Axe's Token Details findings. I fixed the hidden chart subtree and the four prohibited ARIA labels in production markup, then updated tests to assert the same accessible price text without depending on invalid semantics.
 
 ## Verification
 
@@ -81,7 +87,7 @@ pnpm web:build
 pnpm web:e2e
 ```
 
-The implementation web suite contained 28 tests across 10 files. It checked tolerant decoders, stable sorting, URL range handling, number formatting, chart summaries, API error classification, missing metric behavior, keyboard table scrolling, range selection, and disabled trading semantics.
+The implementation web suite contained 32 tests across 12 files. It checked tolerant decoders, stable sorting, URL range handling, number formatting, chart summaries, API error classification, missing metric behavior, keyboard table scrolling, range selection, and disabled trading semantics.
 
 Production browser checks covered:
 
@@ -114,5 +120,7 @@ The cleanup web suite passed with 32 tests across 12 files. The Fallow rerun rep
 The first Playwright milestone passed 5 Chromium tests against the optimized production build. It covered the six market metrics, all required table columns and all 250 rows, both movement-sort directions with reload persistence, keyboard horizontal scrolling, row menu semantics, token-detail navigation, stable loading geometry, and uncaught browser errors. The sandbox initially denied the local server port and the fresh Playwright install lacked Chromium; I reran the scoped server command with permission and installed only Playwright's pinned Chromium binary before trusting the result.
 
 The Token Details milestone added 5 Chromium tests. It covered headline identity and pricing, the accessible chart summary and rendered canvas, all grouped Stats sections, disabled swap/position/order controls, all seven range URLs, invalid-range correction while preserving sibling query state, last-choice-wins behavior under out-of-order responses, and one-request cache reuse when returning to a fresh range.
+
+The final Playwright milestone added 16 Chromium tests. Eight cover independent resource failures, retry recovery, empty and malformed responses, and unknown-token handling. Three run both routes at 1728x1117, 1280x900, and 1024x1117 and assert containment. The remaining tests cover keyboard focus and activation, reduced motion, and zero Axe violations on Explore, Token Details, and the unknown-token state. The focused milestone passed 16/16, and the complete production-browser suite passed 26/26.
 
 One verification caveat: `pnpm web:build` now runs `next build --webpack` in `apps/web-starter/package.json`. The direct Turbopack build path failed in this sandbox because it could not create or bind an internal worker port.

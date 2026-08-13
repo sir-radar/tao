@@ -6,6 +6,7 @@ import type {
   TokenListItem,
   TokenStats,
 } from '../../src/lib/api/contracts';
+import { RANGE_LABELS } from '../../src/lib/api/contracts';
 
 export const marketSummaryFixture: MarketSummary = {
   generatedAt: '2026-06-05T10:30:00.000Z',
@@ -189,10 +190,11 @@ async function delayedJson(
   route: Route,
   body: unknown,
   delayMs: number | undefined,
+  status = 200,
 ) {
   if (delayMs) await new Promise((resolve) => setTimeout(resolve, delayMs));
   try {
-    await json(route, body);
+    await json(route, body, status);
   } catch (error) {
     if (!route.request().failure()) throw error;
   }
@@ -200,28 +202,62 @@ async function delayedJson(
 
 export async function mockExploreApi(
   page: Page,
-  options: { delayMs?: number } = {},
+  options: {
+    delayMs?: number;
+    summaryFailuresBeforeSuccess?: number;
+    tokenFailuresBeforeSuccess?: number;
+    summaryPayload?: unknown;
+    tokenPayload?: unknown;
+  } = {},
 ) {
+  let summaryRequests = 0;
+  let tokenRequests = 0;
   await page.route('**/api/market/summary', async (route) => {
     if (options.delayMs)
       await new Promise((resolve) => setTimeout(resolve, options.delayMs));
-    await json(route, marketSummaryFixture);
+    summaryRequests += 1;
+    if (summaryRequests <= (options.summaryFailuresBeforeSuccess ?? 0)) {
+      await json(
+        route,
+        { message: 'Market summary service is temporarily unavailable.' },
+        503,
+      );
+      return;
+    }
+    await json(route, options.summaryPayload ?? marketSummaryFixture);
   });
   await page.route('**/api/tokens', async (route) => {
     if (options.delayMs)
       await new Promise((resolve) => setTimeout(resolve, options.delayMs));
-    await json(route, {
-      tokens: tokenListFixture,
-      meta: { latencyMs: 0, latencyEnabled: false },
-    });
+    tokenRequests += 1;
+    if (tokenRequests <= (options.tokenFailuresBeforeSuccess ?? 0)) {
+      await json(
+        route,
+        { message: 'Token market service is temporarily unavailable.' },
+        503,
+      );
+      return;
+    }
+    await json(
+      route,
+      options.tokenPayload ?? {
+        tokens: tokenListFixture,
+        meta: { latencyMs: 0, latencyEnabled: false },
+      },
+    );
   });
 }
 
 type TokenRangeResource = 'history' | 'stats';
 
 type TokenDetailsMockOptions = {
+  detailDelayMs?: number;
+  detailFailuresBeforeSuccess?: number;
   historyDelayMs?: Partial<Record<HistoryRange, number>>;
   statsDelayMs?: Partial<Record<HistoryRange, number>>;
+  historyFailuresBeforeSuccess?: Partial<Record<HistoryRange, number>>;
+  statsFailuresBeforeSuccess?: Partial<Record<HistoryRange, number>>;
+  emptyHistoryRanges?: readonly HistoryRange[];
   onRangeRequest?: (resource: TokenRangeResource, range: HistoryRange) => void;
 };
 
@@ -233,14 +269,41 @@ export async function mockTokenDetailsApi(
   const token = tokenListFixture.find((candidate) => candidate.id === id);
   if (!token) throw new Error(`Unknown fixture token: ${id}`);
 
-  await page.route(`**/api/tokens/${id}`, (route) =>
-    json(route, tokenDetailFixture(token)),
-  );
+  let detailRequests = 0;
+  const historyRequests = new Map<HistoryRange, number>();
+  const statsRequests = new Map<HistoryRange, number>();
+
+  await page.route(`**/api/tokens/${id}`, async (route) => {
+    if (options.detailDelayMs)
+      await new Promise((resolve) =>
+        setTimeout(resolve, options.detailDelayMs),
+      );
+    detailRequests += 1;
+    if (detailRequests <= (options.detailFailuresBeforeSuccess ?? 0)) {
+      await json(
+        route,
+        { message: 'Token details are temporarily unavailable.' },
+        503,
+      );
+      return;
+    }
+    await json(route, tokenDetailFixture(token));
+  });
   await page.route(`**/api/tokens/${id}/history?range=*`, (route) => {
     const range = new URL(route.request().url()).searchParams.get(
       'range',
     ) as HistoryRange;
     options.onRangeRequest?.('history', range);
+    const requestNumber = (historyRequests.get(range) ?? 0) + 1;
+    historyRequests.set(range, requestNumber);
+    if (requestNumber <= (options.historyFailuresBeforeSuccess?.[range] ?? 0)) {
+      return delayedJson(
+        route,
+        { message: `${RANGE_LABELS[range]} price history is unavailable.` },
+        options.historyDelayMs?.[range],
+        503,
+      );
+    }
     return delayedJson(
       route,
       {
@@ -248,10 +311,12 @@ export async function mockTokenDetailsApi(
         symbol: token.symbol,
         range,
         generatedAt: '2026-06-05T10:30:00.000Z',
-        points: [
-          { timestamp: '2026-06-05T09:00:00.000Z', price: 9 },
-          { timestamp: '2026-06-05T10:00:00.000Z', price: token.price },
-        ],
+        points: options.emptyHistoryRanges?.includes(range)
+          ? []
+          : [
+              { timestamp: '2026-06-05T09:00:00.000Z', price: 9 },
+              { timestamp: '2026-06-05T10:00:00.000Z', price: token.price },
+            ],
       },
       options.historyDelayMs?.[range],
     );
@@ -261,10 +326,26 @@ export async function mockTokenDetailsApi(
       'range',
     ) as HistoryRange;
     options.onRangeRequest?.('stats', range);
+    const requestNumber = (statsRequests.get(range) ?? 0) + 1;
+    statsRequests.set(range, requestNumber);
+    if (requestNumber <= (options.statsFailuresBeforeSuccess?.[range] ?? 0)) {
+      return delayedJson(
+        route,
+        { message: `${RANGE_LABELS[range]} token stats are unavailable.` },
+        options.statsDelayMs?.[range],
+        503,
+      );
+    }
     return delayedJson(
       route,
       statsFixture(token, range),
       options.statsDelayMs?.[range],
     );
   });
+}
+
+export async function mockUnknownTokenApi(page: Page, id = 'missing-token') {
+  await page.route(`**/api/tokens/${id}`, (route) =>
+    json(route, { message: `No token with id "${id}" exists.` }, 404),
+  );
 }

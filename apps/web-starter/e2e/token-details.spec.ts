@@ -16,7 +16,9 @@ test.describe('Token Details', () => {
     await expect(
       page.getByRole('navigation', { name: 'Breadcrumb' }),
     ).toContainText('SN42');
-    await expect(page.getByLabel('Current price: $10.00')).toBeVisible();
+    await expect(
+      page.getByText('Current price: $10.00', { exact: true }),
+    ).toBeAttached();
 
     const chart = page.getByRole('figure');
     await expect(chart).toHaveAccessibleName(/ALPHA 24H price chart in UTC/);

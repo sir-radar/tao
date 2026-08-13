@@ -37,7 +37,9 @@ describe('ChartPanel', () => {
       <ChartPanel token={token} {...panelProps} />,
     );
 
-    const price = screen.getByLabelText('Current price: $5.67');
+    const priceText = screen.getByText('Current price: $5.67');
+    const price = priceText.closest('p');
+    if (!price) throw new Error('Expected current price container');
     expect(price.querySelector('[data-slot="price-currency"]')).toHaveClass(
       'text-[36px]',
       'text-muted-foreground',

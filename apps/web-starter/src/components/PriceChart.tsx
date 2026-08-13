@@ -212,6 +212,7 @@ export function PriceChart({
         <div
           ref={containerRef}
           className="absolute inset-0"
+          inert
           aria-hidden="true"
         />
         {tooltip && (

@@ -111,7 +111,9 @@ The app targets desktop widths. At narrow desktop widths, the table scrolls insi
 
 Vitest covers boundary normalization, API error classification, formatting, range parsing, stable sorting, chart summaries, flat price domains, missing market values, range selection, table semantics, keyboard table scrolling, and disabled trading controls.
 
-Playwright runs against an optimized Next production build with deterministic browser-level API fixtures. The browser suite covers all 250 Explore rows, required columns and market metrics, sorting in both directions with URL persistence, keyboard table scrolling, row action semantics, token-detail navigation, and loading geometry. Token Details coverage includes the headline, chart, grouped stats, disabled trading rail, all seven URL-backed ranges, invalid-range normalization, out-of-order response safety, and fresh-range cache reuse. Every test also fails on uncaught page and console errors. Failure artifacts are written to `apps/web-starter/test-results`; the HTML report is written to `apps/web-starter/playwright-report`.
+Playwright runs against an optimized Next production build with deterministic browser-level API fixtures. The 26-test Chromium suite covers all 250 Explore rows, required columns and market metrics, sorting in both directions with URL persistence, keyboard table scrolling, row action semantics, token-detail navigation, and loading geometry. Token Details coverage includes the headline, chart, grouped stats, disabled trading rail, all seven URL-backed ranges, invalid-range normalization, out-of-order response safety, and fresh-range cache reuse.
+
+Resilience coverage verifies independent summary, token-list, history, and stats failures; local retry recovery; empty and malformed lists; empty history; and unknown-token handling. Layout checks exercise both routes at 1728x1117, 1280x900, and 1024x1117, assert no document overflow, and ensure the chart and rail do not overlap. Keyboard coverage includes skip navigation, sorting, range focus and activation, and reduced motion. `@axe-core/playwright` scans Explore, Token Details, and the unknown-token state against WCAG 2.0/2.1 A and AA rules. Every test fails on uncaught page errors and unexpected console errors. Failure artifacts are written to `apps/web-starter/test-results`; the HTML report is written to `apps/web-starter/playwright-report`.
 
 The latest verification pass ran:
 
@@ -122,10 +124,11 @@ pnpm backend:build
 pnpm web:lint
 pnpm web:typecheck
 pnpm web:test
+pnpm web:e2e
 pnpm exec next build --webpack
 ```
 
-The web test suite passed with 32 tests across 12 files after the cleanup pass.
+The web test suite passed with 32 Vitest tests across 12 files. Playwright passed all 26 Chromium tests against the optimized production build.
 
 Production browser checks covered:
 
@@ -139,6 +142,8 @@ Production browser checks covered:
 I switched ranges in quick succession and confirmed the last selection stayed current. I stopped the backend, confirmed two independent Explore errors, restarted it, and recovered both sections through their Retry buttons.
 
 Across browser verification passes, Token Details also ran at 1920x1080, 1728x1117, and 1280x900. The final cleanup pass repeated Explore at 1728x1117, 1280x900, and 1024x1117, plus Token Details at 1024x1117. Explore loaded all 250 token links at each width and produced no document overflow. Token Details loaded `Gradients` at `24h`, rendered the chart canvases and disabled controls, and produced no application console warnings or errors.
+
+The final automated pass repeated both routes at 1728x1117, 1280x900, and 1024x1117. It found no document overflow, chart/rail overlap, unexpected browser errors, or automated WCAG A/AA violations in the three scanned states.
 
 ## Tradeoffs and known limits
 
