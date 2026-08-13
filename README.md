@@ -28,6 +28,7 @@ Requirements: Node.js 20 or newer and pnpm 9.
 
 ```bash
 pnpm install
+pnpm --filter @tao-takehome/web-starter exec playwright install chromium
 cp apps/web-starter/.env.example apps/web-starter/.env.local
 ```
 
@@ -57,6 +58,7 @@ pnpm backend:build
 pnpm web:lint
 pnpm web:typecheck
 pnpm web:test
+pnpm web:e2e
 pnpm web:build
 pnpm web:start
 ```
@@ -108,6 +110,8 @@ The app targets desktop widths. At narrow desktop widths, the table scrolls insi
 ## Tests and verification
 
 Vitest covers boundary normalization, API error classification, formatting, range parsing, stable sorting, chart summaries, flat price domains, missing market values, range selection, table semantics, keyboard table scrolling, and disabled trading controls.
+
+Playwright runs against an optimized Next production build with deterministic browser-level API fixtures. The Explore suite covers all 250 token rows, required columns and market metrics, sorting in both directions with URL persistence, keyboard table scrolling, row action semantics, token-detail navigation, loading geometry, and uncaught browser errors. Failure artifacts are written to `apps/web-starter/test-results`; the HTML report is written to `apps/web-starter/playwright-report`.
 
 The latest verification pass ran:
 

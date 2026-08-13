@@ -12,6 +12,8 @@ Browser control exercised the running app, route states, keyboard behavior, requ
 
 I used Fallow 3.14.0 for a frontend-only static cleanup pass. Its dead-code graph found three unreachable UI files and 19 unused exports. I used its dry-run fixer and trace commands before changing code, then compared mild and semantic duplicate reports before and after cleanup.
 
+I added Playwright 1.57 for production-build end-to-end coverage. Browser-level route interception supplies typed, deterministic API fixtures while preserving the real Next.js routes, React rendering, TanStack Query behavior, URL state, keyboard interaction, and accessibility tree. The initial suite also records screenshots, video, traces, and uncaught browser errors when a test fails.
+
 After a browser extension injected attributes into the root elements, I added React's `suppressHydrationWarning` to `<html>` and `<body>` to prevent extension-only hydration warnings without changing application behavior.
 
 ## Workflow
@@ -26,6 +28,8 @@ For Token Details, I mapped the 1920x2042 export into the 164px token band, 1322
 
 For the cleanup pass, I accepted Fallow's 12-item export preview after its traces showed no external references. I removed the unused component bodies and three unreachable files by hand. I also consolidated duplicate list/history normalization into one keyed-item helper and moved shared history/stats query options into one hook.
 
+For the Playwright pass, I started with the runner and Explore route as one reviewable unit. I generated 250 deterministic token rows, exercised the optimized production server, and used the first failing browser run to refine locators against Chromium's computed accessibility names. I preserved the unrelated generated `next-env.d.ts` change throughout.
+
 Each milestone ended with focused checks, a diff audit, and a commit. I kept the user-owned `.gitignore` edit out of the cleanup commit.
 
 ## Accepted decisions
@@ -39,6 +43,8 @@ Each milestone ended with focused checks, a diff audit, and a commit. I kept the
 - I kept range-specific API data across highlights, financials, subnet data, trading volume, and price history.
 - I accepted Fallow's traced removal of unused UI primitives, export markers, and formatting helpers.
 - I added shared normalization and range-query helpers for the two meaningful semantic duplicate groups.
+- I kept Playwright API mocks at the browser boundary so tests cover the application transport and normalization layers without inheriting the backend's intentional jitter and intermittent history failure.
+- I run Playwright against `next build --webpack` and `next start`, matching the documented production path instead of relying on development-server behavior.
 
 ## Reworked or rejected suggestions
 
@@ -54,6 +60,7 @@ Each milestone ended with focused checks, a diff audit, and a commit. I kept the
 - I rejected semantic clone suggestions across alert and table primitives because each wrapper preserves different HTML semantics and prop types.
 - I kept repeated numeric fields explicit in the API contracts. Type intersections would shorten the file but make each response shape harder to audit against the backend.
 - The initial build used Next 16's Turbopack default. It failed because this sandbox denied an internal worker port. I changed the package build script to `next build --webpack` after the same production build passed with Webpack.
+- I rewrote the first Playwright sortable-header locators. Exact column-header names did not account for the nested button's accessible label, so the final tests target the public “Sort by …” button name and locate its owning header for `aria-sort` assertions.
 
 ## Verification
 
@@ -69,6 +76,7 @@ pnpm web:lint
 pnpm web:typecheck
 pnpm web:test
 pnpm web:build
+pnpm web:e2e
 ```
 
 The implementation web suite contained 28 tests across 10 files. It checked tolerant decoders, stable sorting, URL range handling, number formatting, chart summaries, API error classification, missing metric behavior, keyboard table scrolling, range selection, and disabled trading semantics.
@@ -100,5 +108,7 @@ pnpm dlx fallow duplicates --root apps/web-starter --preset semantic
 ```
 
 The cleanup web suite passed with 32 tests across 12 files. The Fallow rerun reported zero dead-code findings and zero mild duplicate groups. Semantic duplication fell from 7.24% to 4.79%; I reviewed the nine remaining groups as typed API field repetition, HTML wrapper structure, or two short endpoint-specific hook calls.
+
+The first Playwright milestone passed 5 Chromium tests against the optimized production build. It covered the six market metrics, all required table columns and all 250 rows, both movement-sort directions with reload persistence, keyboard horizontal scrolling, row menu semantics, token-detail navigation, stable loading geometry, and uncaught browser errors. The sandbox initially denied the local server port and the fresh Playwright install lacked Chromium; I reran the scoped server command with permission and installed only Playwright's pinned Chromium binary before trusting the result.
 
 One verification caveat: `pnpm web:build` now runs `next build --webpack` in `apps/web-starter/package.json`. The direct Turbopack build path failed in this sandbox because it could not create or bind an internal worker port.
