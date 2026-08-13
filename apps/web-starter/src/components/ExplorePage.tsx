@@ -94,17 +94,31 @@ export function ExplorePage() {
               aria-hidden="true"
             />
           </button>
-          <div
-            className="flex h-11 w-[127px] rounded-2xl bg-secondary p-1 text-sm font-[570] leading-5"
-            aria-label="Currency display: USD"
+          <fieldset
+            disabled
+            className="flex h-11 w-[127px] rounded-2xl bg-secondary p-1 text-sm font-[570] leading-5 disabled:opacity-100"
           >
-            <span className="flex h-9 w-[60px] items-center justify-center rounded-[14px] bg-card text-foreground shadow-sm">
+            <legend className="sr-only">Currency display</legend>
+            <label className="flex h-9 w-[60px] items-center justify-center rounded-[14px] bg-card text-foreground shadow-sm">
+              <input
+                type="radio"
+                name="explore-currency"
+                value="USD"
+                defaultChecked
+                className="sr-only"
+              />
               USD
-            </span>
-            <span className="flex h-9 w-[59px] items-center justify-center text-muted-foreground">
+            </label>
+            <label className="flex h-9 w-[59px] items-center justify-center text-muted-foreground">
+              <input
+                type="radio"
+                name="explore-currency"
+                value="TAO"
+                className="sr-only"
+              />
               TAO
-            </span>
-          </div>
+            </label>
+          </fieldset>
         </div>
       </div>
 

@@ -4,7 +4,7 @@
 
 I used Codex to inspect the repository, plan the work, edit code, run checks, and control the local production app in a browser. I split the implementation into repository setup, Explore, Token Details, resilience, documentation, and cleanup passes. The repository's `AGENTS.md` required a review pause after each milestone.
 
-The Figma design-context workflow attempted to read file `ShGOnid4sBkwGybMICX0qh`, nodes `5:678`, `5:2035`, and `5:4313`. The connected identity lacked editor access, so the workflow stopped after the file-level error. The Stats request returned debug UUID `22c5e20b-1330-46e9-a4d0-2febe270ff71`; a later Explore-only precision pass retried `5:678` after authentication and received the same editor-access blocker with debug UUID `62cdafe7-98bc-4e6c-b457-570b0d2c83aa`. I inspected the supplied PNG and CSS exports plus the TAO logo, movement, control, token-link, and trading SVGs instead and recorded the access gap in the README.
+The Figma design-context workflow attempted to read file `ShGOnid4sBkwGybMICX0qh`, nodes `5:678`, `5:2035`, and `5:4313`. The connected identity lacked editor access, so the workflow stopped after the file-level error. The Stats request returned debug UUID `22c5e20b-1330-46e9-a4d0-2febe270ff71`; a later Explore-only precision pass retried `5:678` after authentication and received the same editor-access blocker with debug UUID `62cdafe7-98bc-4e6c-b457-570b0d2c83aa`. The condensed follow-up retried `5:2035` and received debug UUID `43c46d71-3852-46b5-a315-826bb8268163`. I inspected the supplied PNG and CSS exports plus the TAO logo, movement, control, token-link, and trading SVGs instead and recorded the access gap in the README.
 
 The frontend-design and frontend-skill guidance shaped the dense exchange layout, visual hierarchy, responsive composition, and decision to keep the market surface flat. The stop-slop skill guided the documentation edit.
 
@@ -25,6 +25,8 @@ For Explore, I mapped the frame to the header, market band, view controls, table
 For the later Explore precision pass, I compared the running 1728x1117 page with the newly supplied screenshot and its 20,575-line CSS export. Browser measurements found that the shared Token Details header had widened Explore's Download button from 122px to 133px, shifting the complete search/action cluster 11px left. I restored route-specific button geometry, fixed the six market-tab widths and footer groups to the export, mapped the supplied 430/570 text weights to the Explore components, and prevented the long condensed market-ratio label from wrapping into its value. I kept the action menu closed by default and validated the screenshot's open-menu state after activating the fourth-row control instead of making an obstructive interaction state the page default.
 
 Review feedback then identified that the table-to-footer gap only existed when the viewport supplied spare height. At 1280x900 the footer touched the table even though the exported content frame is 961px tall. I made that minimum explicit on Explore and added a browser assertion that preserves at least the reference's 139px gap at every required desktop viewport.
+
+The condensed follow-up compared the running page with the supplied 697x670 screenshot and its 20,483-line CSS export. The image maps to the 1024px frame at the browser viewport ratio. The existing layout matched the exported header, gutters, summary, controls, table, and footer geometry. I kept those dimensions and replaced the decorative header search container with a search input at full desktop widths and an icon button at condensed widths. I replaced the currency spans with a disabled radio fieldset. A new Playwright check fixes the 1024x1117 landmarks to their exported boxes and checks the native control semantics.
 
 For the icon updates, I compared SHA-256 hashes before and after adding the six user-provided market-view SVGs and `Settings2.svg`. The hashes matched, so the repository copies preserve the supplied bytes.
 
@@ -58,6 +60,7 @@ Each milestone ended with focused checks, a diff audit, and a commit. I kept the
 - I run Playwright against `next build --webpack` and `next start`, matching the documented production path instead of relying on development-server behavior.
 - I scope the runtime-error fixture's HTTP failure allowance to resilience tests that return 404 or 503 responses; happy-path tests still fail on every console error.
 - I kept automated accessibility checks focused on representative pages and paired them with explicit keyboard, focus, reduced-motion, overflow, and landmark assertions.
+- I used native search and radio controls for the header and currency preview while preserving their measured condensed dimensions.
 
 ## Reworked or rejected suggestions
 
@@ -76,6 +79,7 @@ Each milestone ended with focused checks, a diff audit, and a commit. I kept the
 - I rewrote the first Playwright sortable-header locators. Exact column-header names did not account for the nested button's accessible label, so the final tests target the public “Sort by …” button name and locate its owning header for `aria-sort` assertions.
 - I rewrote the first range keyboard assertion after the browser showed the component's deliberate interaction model: arrow keys move focus and Enter or Space commits the URL-backed range.
 - I did not suppress Axe's Token Details findings. I fixed the hidden chart subtree and the four prohibited ARIA labels in production markup, then updated tests to assert the same accessible price text without depending on invalid semantics.
+- I did not crop the small token marks from the screenshot or draw replacements. The missing Haffer files and per-token assets require a shared Figma file or supplied source files.
 
 ## Verification
 
@@ -133,5 +137,7 @@ The final Playwright milestone added 16 Chromium tests. Eight cover independent 
 The loading-state audit added two Token Details tests. The focused Token Details file passed 7/7 tests. The final production-browser suite passed 28/28.
 
 The later Explore precision pass reran backend tests, typecheck, and build; web lint, typecheck, all 32 Vitest tests, the production build, and the complete 28-test Playwright suite. Direct browser measurements at 1728x1117 confirmed the exported 270px search field, 122px Download control, 144px wallet control, 699px market-view rail, 1600x140 summary band, 1600x604 table, and 199x112 activated row menu. Additional 1280x900 and 1024x1117 passes reported zero horizontal document overflow, console errors, page errors, or failed API responses.
+
+The condensed follow-up passed 32 backend tests, backend typecheck and build, web lint, web typecheck, all 32 Vitest tests, the Webpack production build, and all 29 Playwright tests. The first full-suite command passed an extra `--` through pnpm, so Playwright treated it as a file pattern and ran no tests. I reran the suite through the workspace Playwright binary and recorded the 29/29 result. The new 1024x1117 check confirmed a 72px header, a 976x140 summary at x24/y72, a 976x604 table at x24/y290, and an 84px footer at y1033.
 
 One verification caveat: `pnpm web:build` now runs `next build --webpack` in `apps/web-starter/package.json`. The direct Turbopack build path failed in this sandbox because it could not create or bind an internal worker port.

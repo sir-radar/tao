@@ -66,14 +66,24 @@ export function AppHeader() {
         </div>
 
         <div className="ml-auto flex items-center gap-4">
-          <div
-            className="flex h-10 w-[270px] items-center gap-2.5 rounded-2xl bg-secondary px-4 text-sm font-[430] text-muted-foreground max-[1260px]:size-9 max-[1260px]:justify-center max-[1260px]:border max-[1260px]:border-white/8 max-[1260px]:bg-black/20 max-[1260px]:px-0"
-            aria-label="Search preview"
-            aria-disabled="true"
-          >
+          <label className="flex h-10 w-[270px] items-center gap-2.5 rounded-2xl bg-secondary px-4 text-sm font-[430] text-muted-foreground max-[1260px]:hidden">
             <Search className="size-4 shrink-0" aria-hidden="true" />
-            <span className="max-[1260px]:hidden">Search</span>
-          </div>
+            <span className="sr-only">Search tokens</span>
+            <input
+              type="search"
+              placeholder="Search"
+              disabled
+              className="min-w-0 flex-1 bg-transparent p-0 text-foreground outline-none placeholder:text-muted-foreground disabled:cursor-default disabled:opacity-100"
+            />
+          </label>
+          <button
+            type="button"
+            disabled
+            aria-label="Search tokens"
+            className="hidden size-9 items-center justify-center rounded-2xl border border-white/8 bg-black/20 text-foreground disabled:opacity-100 max-[1260px]:flex"
+          >
+            <Search className="size-4" aria-hidden="true" />
+          </button>
           <div className="flex items-center gap-2">
             <button
               type="button"

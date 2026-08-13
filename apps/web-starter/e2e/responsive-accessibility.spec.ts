@@ -78,6 +78,44 @@ for (const viewport of [
   });
 }
 
+test('matches the 1024px condensed frame geometry and control semantics', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1024, height: 1117 });
+  await mockExploreApi(page);
+  await page.goto('/');
+
+  await expect(
+    page.getByRole('region', { name: 'Token markets table' }),
+  ).toBeVisible();
+
+  const boxes = await Promise.all(
+    [
+      page.getByRole('banner'),
+      page.getByRole('region', { name: 'Global market summary' }),
+      page.getByRole('region', { name: 'Token markets table' }),
+      page.getByRole('contentinfo'),
+    ].map((locator) => locator.boundingBox()),
+  );
+
+  expect(boxes).toEqual([
+    { x: 0, y: 0, width: 1024, height: 72 },
+    { x: 24, y: 72, width: 976, height: 140 },
+    { x: 24, y: 290, width: 976, height: 604 },
+    { x: 0, y: 1033, width: 1024, height: 84 },
+  ]);
+
+  await expect(
+    page.getByRole('button', { name: 'Search tokens' }),
+  ).toBeDisabled();
+  await expect(
+    page.getByRole('group', { name: 'Currency display' }),
+  ).toHaveAttribute('disabled', '');
+  const usdCurrency = page.getByRole('radio', { name: 'USD', exact: true });
+  await expect(usdCurrency).toBeDisabled();
+  await expect(usdCurrency).toBeChecked();
+});
+
 test.describe('Keyboard and accessibility', () => {
   test('supports visible keyboard navigation for skip, sort, and range controls', async ({
     page,
