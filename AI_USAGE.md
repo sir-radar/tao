@@ -30,6 +30,8 @@ For the cleanup pass, I accepted Fallow's 12-item export preview after its trace
 
 For the Playwright pass, I started with the runner and Explore route as one reviewable unit. I generated 250 deterministic token rows, exercised the optimized production server, and used the first failing browser run to refine locators against Chromium's computed accessibility names. I preserved the unrelated generated `next-env.d.ts` change throughout.
 
+The next Playwright milestone extended the same typed boundary fixtures with range-specific delays and request observation. I used those controls to prove that a slower abandoned range cannot replace the final selection and that revisiting a fresh range reuses both cached history and cached stats. Browser failures also corrected two test-only assumptions: Lightweight Charts uses multiple canvas layers, and the visible Stats heading shares its name with the chart's screen-reader heading.
+
 Each milestone ended with focused checks, a diff audit, and a commit. I kept the user-owned `.gitignore` edit out of the cleanup commit.
 
 ## Accepted decisions
@@ -110,5 +112,7 @@ pnpm dlx fallow duplicates --root apps/web-starter --preset semantic
 The cleanup web suite passed with 32 tests across 12 files. The Fallow rerun reported zero dead-code findings and zero mild duplicate groups. Semantic duplication fell from 7.24% to 4.79%; I reviewed the nine remaining groups as typed API field repetition, HTML wrapper structure, or two short endpoint-specific hook calls.
 
 The first Playwright milestone passed 5 Chromium tests against the optimized production build. It covered the six market metrics, all required table columns and all 250 rows, both movement-sort directions with reload persistence, keyboard horizontal scrolling, row menu semantics, token-detail navigation, stable loading geometry, and uncaught browser errors. The sandbox initially denied the local server port and the fresh Playwright install lacked Chromium; I reran the scoped server command with permission and installed only Playwright's pinned Chromium binary before trusting the result.
+
+The Token Details milestone added 5 Chromium tests. It covered headline identity and pricing, the accessible chart summary and rendered canvas, all grouped Stats sections, disabled swap/position/order controls, all seven range URLs, invalid-range correction while preserving sibling query state, last-choice-wins behavior under out-of-order responses, and one-request cache reuse when returning to a fresh range.
 
 One verification caveat: `pnpm web:build` now runs `next build --webpack` in `apps/web-starter/package.json`. The direct Turbopack build path failed in this sandbox because it could not create or bind an internal worker port.

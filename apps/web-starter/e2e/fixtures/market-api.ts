@@ -185,6 +185,19 @@ async function json(route: Route, body: unknown, status = 200) {
   });
 }
 
+async function delayedJson(
+  route: Route,
+  body: unknown,
+  delayMs: number | undefined,
+) {
+  if (delayMs) await new Promise((resolve) => setTimeout(resolve, delayMs));
+  try {
+    await json(route, body);
+  } catch (error) {
+    if (!route.request().failure()) throw error;
+  }
+}
+
 export async function mockExploreApi(
   page: Page,
   options: { delayMs?: number } = {},
@@ -204,7 +217,19 @@ export async function mockExploreApi(
   });
 }
 
-export async function mockTokenDetailsApi(page: Page, id = 'alpha-token') {
+type TokenRangeResource = 'history' | 'stats';
+
+type TokenDetailsMockOptions = {
+  historyDelayMs?: Partial<Record<HistoryRange, number>>;
+  statsDelayMs?: Partial<Record<HistoryRange, number>>;
+  onRangeRequest?: (resource: TokenRangeResource, range: HistoryRange) => void;
+};
+
+export async function mockTokenDetailsApi(
+  page: Page,
+  id = 'alpha-token',
+  options: TokenDetailsMockOptions = {},
+) {
   const token = tokenListFixture.find((candidate) => candidate.id === id);
   if (!token) throw new Error(`Unknown fixture token: ${id}`);
 
@@ -215,21 +240,31 @@ export async function mockTokenDetailsApi(page: Page, id = 'alpha-token') {
     const range = new URL(route.request().url()).searchParams.get(
       'range',
     ) as HistoryRange;
-    return json(route, {
-      id,
-      symbol: token.symbol,
-      range,
-      generatedAt: '2026-06-05T10:30:00.000Z',
-      points: [
-        { timestamp: '2026-06-05T09:00:00.000Z', price: 9 },
-        { timestamp: '2026-06-05T10:00:00.000Z', price: token.price },
-      ],
-    });
+    options.onRangeRequest?.('history', range);
+    return delayedJson(
+      route,
+      {
+        id,
+        symbol: token.symbol,
+        range,
+        generatedAt: '2026-06-05T10:30:00.000Z',
+        points: [
+          { timestamp: '2026-06-05T09:00:00.000Z', price: 9 },
+          { timestamp: '2026-06-05T10:00:00.000Z', price: token.price },
+        ],
+      },
+      options.historyDelayMs?.[range],
+    );
   });
   await page.route(`**/api/tokens/${id}/stats?range=*`, (route) => {
     const range = new URL(route.request().url()).searchParams.get(
       'range',
     ) as HistoryRange;
-    return json(route, statsFixture(token, range));
+    options.onRangeRequest?.('stats', range);
+    return delayedJson(
+      route,
+      statsFixture(token, range),
+      options.statsDelayMs?.[range],
+    );
   });
 }
