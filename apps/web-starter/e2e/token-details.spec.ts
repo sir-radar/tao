@@ -52,6 +52,21 @@ test.describe('Token Details', () => {
       page.getByText('Current price: $10.00', { exact: true }),
     ).toBeAttached();
 
+    const divider = page.locator('[data-slot="price-header-divider"]');
+    const dividerLine = divider.locator('div');
+    const dividerBox = await divider.boundingBox();
+    const dividerLineBox = await dividerLine.boundingBox();
+    if (!dividerBox || !dividerLineBox) {
+      throw new Error('Expected price header divider geometry');
+    }
+    const spaceAbove = dividerLineBox.y - dividerBox.y;
+    const spaceBelow =
+      dividerBox.y +
+      dividerBox.height -
+      (dividerLineBox.y + dividerLineBox.height);
+    expect(spaceAbove).toBe(24);
+    expect(spaceBelow).toBe(24);
+
     const chart = page.getByRole('figure');
     await expect(chart).toHaveAccessibleName(/ALPHA 24H price chart in UTC/);
     await expect(chart.locator('canvas').first()).toBeAttached();

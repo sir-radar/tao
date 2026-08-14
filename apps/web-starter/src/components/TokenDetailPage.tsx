@@ -20,7 +20,11 @@ import { TradingRail } from './TradingRail';
 
 function PriceHeaderDivider() {
   return (
-    <div className="detail-page-width h-px" aria-hidden="true">
+    <div
+      className="detail-page-width py-6"
+      data-slot="price-header-divider"
+      aria-hidden="true"
+    >
       <div className="h-px bg-border" />
     </div>
   );
@@ -34,7 +38,7 @@ export function TokenDetailSkeleton() {
       aria-label="Loading token details"
       aria-busy="true"
     >
-      <div className="detail-page-width flex h-[164px] flex-col gap-6 py-6">
+      <div className="detail-page-width flex h-[116px] flex-col gap-6 pt-6">
         <Skeleton className="h-4 w-32" />
         <div className="flex items-center gap-3">
           <Skeleton className="size-12 rounded-full" />
